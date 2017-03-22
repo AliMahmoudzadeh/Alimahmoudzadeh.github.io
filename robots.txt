@@ -1,0 +1,4 @@
+Sitemap: http://Alimahmoudzadeh.github.io/sitemapindex.xml
+
+User-Agent: *
+Host: Alimahmoudzadeh.github.io
