@@ -1,0 +1,2691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+        <meta charset="utf-8" />
+        <title>Data Immersion - python EDA twitter news</title>
+        <link rel="stylesheet" href="https://alimahmoudzadeh.github.io/theme/css/main.css" />
+        <link href="https://alimahmoudzadeh.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Data Immersion Atom Feed" />
+
+        <!--[if IE]>
+            <script src="https://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+</head>
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <h1><a href="https://alimahmoudzadeh.github.io/">Data Immersion </a></h1>
+                <nav><ul>
+                    <li><a href="https://alimahmoudzadeh.github.io/category/machine-learning.html">machine learning</a></li>
+                    <li><a href="https://alimahmoudzadeh.github.io/category/posts.html">posts</a></li>
+                </ul></nav>
+        </header><!-- /#banner -->
+
+            <aside id="featured" class="body">
+                <article>
+                    <h1 class="entry-title"><a href="https://alimahmoudzadeh.github.io/twitter_capture_p1.html">Hot News</a></h1>
+<footer class="post-info">
+        <abbr class="published" title="2017-04-01T17:45:05-07:00">
+                Published: Sat 01 April 2017
+        </abbr>
+
+        <address class="vcard author">
+                By                         <a class="url fn" href="https://alimahmoudzadeh.github.io/author/ali-mah.html">Ali Mah</a>
+        </address>
+<p>In <a href="https://alimahmoudzadeh.github.io/category/machine-learning.html">machine learning</a>.</p>
+<p>tags: <a href="https://alimahmoudzadeh.github.io/tag/python-eda-twitter-news.html">python EDA twitter news</a> </p>
+</footer><!-- /.post-info --><style type="text/css">/*!
+*
+* IPython notebook
+*
+*/
+/* CSS font colors for translated ANSI colors. */
+.ansibold {
+  font-weight: bold;
+}
+/* use dark versions for foreground, to improve visibility */
+.ansiblack {
+  color: black;
+}
+.ansired {
+  color: darkred;
+}
+.ansigreen {
+  color: darkgreen;
+}
+.ansiyellow {
+  color: #c4a000;
+}
+.ansiblue {
+  color: darkblue;
+}
+.ansipurple {
+  color: darkviolet;
+}
+.ansicyan {
+  color: steelblue;
+}
+.ansigray {
+  color: gray;
+}
+/* and light for background, for the same reason */
+.ansibgblack {
+  background-color: black;
+}
+.ansibgred {
+  background-color: red;
+}
+.ansibggreen {
+  background-color: green;
+}
+.ansibgyellow {
+  background-color: yellow;
+}
+.ansibgblue {
+  background-color: blue;
+}
+.ansibgpurple {
+  background-color: magenta;
+}
+.ansibgcyan {
+  background-color: cyan;
+}
+.ansibggray {
+  background-color: gray;
+}
+div.cell {
+  /* Old browsers */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-box-align: stretch;
+  display: -moz-box;
+  -moz-box-orient: vertical;
+  -moz-box-align: stretch;
+  display: box;
+  box-orient: vertical;
+  box-align: stretch;
+  /* Modern browsers */
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  border-radius: 2px;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  border-width: 1px;
+  border-style: solid;
+  border-color: transparent;
+  width: 100%;
+  padding: 5px;
+  /* This acts as a spacer between cells, that is outside the border */
+  margin: 0px;
+  outline: none;
+  border-left-width: 1px;
+  padding-left: 5px;
+  background: linear-gradient(to right, transparent -40px, transparent 1px, transparent 1px, transparent 100%);
+}
+div.cell.jupyter-soft-selected {
+  border-left-color: #90CAF9;
+  border-left-color: #E3F2FD;
+  border-left-width: 1px;
+  padding-left: 5px;
+  border-right-color: #E3F2FD;
+  border-right-width: 1px;
+  background: #E3F2FD;
+}
+@media print {
+  div.cell.jupyter-soft-selected {
+    border-color: transparent;
+  }
+}
+div.cell.selected {
+  border-color: #ababab;
+  border-left-width: 0px;
+  padding-left: 6px;
+  background: linear-gradient(to right, #42A5F5 -40px, #42A5F5 5px, transparent 5px, transparent 100%);
+}
+@media print {
+  div.cell.selected {
+    border-color: transparent;
+  }
+}
+div.cell.selected.jupyter-soft-selected {
+  border-left-width: 0;
+  padding-left: 6px;
+  background: linear-gradient(to right, #42A5F5 -40px, #42A5F5 7px, #E3F2FD 7px, #E3F2FD 100%);
+}
+.edit_mode div.cell.selected {
+  border-color: #66BB6A;
+  border-left-width: 0px;
+  padding-left: 6px;
+  background: linear-gradient(to right, #66BB6A -40px, #66BB6A 5px, transparent 5px, transparent 100%);
+}
+@media print {
+  .edit_mode div.cell.selected {
+    border-color: transparent;
+  }
+}
+.prompt {
+  /* This needs to be wide enough for 3 digit prompt numbers: In[100]: */
+  min-width: 14ex;
+  /* This padding is tuned to match the padding on the CodeMirror editor. */
+  padding: 0.4em;
+  margin: 0px;
+  font-family: monospace;
+  text-align: right;
+  /* This has to match that of the the CodeMirror class line-height below */
+  line-height: 1.21429em;
+  /* Don't highlight prompt number selection */
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  /* Use default cursor */
+  cursor: default;
+}
+@media (max-width: 540px) {
+  .prompt {
+    text-align: left;
+  }
+}
+div.inner_cell {
+  /* Old browsers */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-box-align: stretch;
+  display: -moz-box;
+  -moz-box-orient: vertical;
+  -moz-box-align: stretch;
+  display: box;
+  box-orient: vertical;
+  box-align: stretch;
+  /* Modern browsers */
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  /* Old browsers */
+  -webkit-box-flex: 1;
+  -moz-box-flex: 1;
+  box-flex: 1;
+  /* Modern browsers */
+  flex: 1;
+}
+@-moz-document url-prefix() {
+  div.inner_cell {
+    overflow-x: hidden;
+  }
+}
+/* input_area and input_prompt must match in top border and margin for alignment */
+div.input_area {
+  border: 1px solid #cfcfcf;
+  border-radius: 2px;
+  background: #f7f7f7;
+  line-height: 1.21429em;
+}
+/* This is needed so that empty prompt areas can collapse to zero height when there
+   is no content in the output_subarea and the prompt. The main purpose of this is
+   to make sure that empty JavaScript output_subareas have no height. */
+div.prompt:empty {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+div.unrecognized_cell {
+  padding: 5px 5px 5px 0px;
+  /* Old browsers */
+  display: -webkit-box;
+  -webkit-box-orient: horizontal;
+  -webkit-box-align: stretch;
+  display: -moz-box;
+  -moz-box-orient: horizontal;
+  -moz-box-align: stretch;
+  display: box;
+  box-orient: horizontal;
+  box-align: stretch;
+  /* Modern browsers */
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+}
+div.unrecognized_cell .inner_cell {
+  border-radius: 2px;
+  padding: 5px;
+  font-weight: bold;
+  color: red;
+  border: 1px solid #cfcfcf;
+  background: #eaeaea;
+}
+div.unrecognized_cell .inner_cell a {
+  color: inherit;
+  text-decoration: none;
+}
+div.unrecognized_cell .inner_cell a:hover {
+  color: inherit;
+  text-decoration: none;
+}
+@media (max-width: 540px) {
+  div.unrecognized_cell > div.prompt {
+    display: none;
+  }
+}
+div.code_cell {
+  /* avoid page breaking on code cells when printing */
+}
+@media print {
+  div.code_cell {
+    page-break-inside: avoid;
+  }
+}
+/* any special styling for code cells that are currently running goes here */
+div.input {
+  page-break-inside: avoid;
+  /* Old browsers */
+  display: -webkit-box;
+  -webkit-box-orient: horizontal;
+  -webkit-box-align: stretch;
+  display: -moz-box;
+  -moz-box-orient: horizontal;
+  -moz-box-align: stretch;
+  display: box;
+  box-orient: horizontal;
+  box-align: stretch;
+  /* Modern browsers */
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+}
+@media (max-width: 540px) {
+  div.input {
+    /* Old browsers */
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-box-align: stretch;
+    display: -moz-box;
+    -moz-box-orient: vertical;
+    -moz-box-align: stretch;
+    display: box;
+    box-orient: vertical;
+    box-align: stretch;
+    /* Modern browsers */
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+/* input_area and input_prompt must match in top border and margin for alignment */
+div.input_prompt {
+  color: #303F9F;
+  border-top: 1px solid transparent;
+}
+div.input_area > div.highlight {
+  margin: 0.4em;
+  border: none;
+  padding: 0px;
+  background-color: transparent;
+}
+div.input_area > div.highlight > pre {
+  margin: 0px;
+  border: none;
+  padding: 0px;
+  background-color: transparent;
+}
+/* The following gets added to the <head> if it is detected that the user has a
+ * monospace font with inconsistent normal/bold/italic height.  See
+ * notebookmain.js.  Such fonts will have keywords vertically offset with
+ * respect to the rest of the text.  The user should select a better font.
+ * See: https://github.com/ipython/ipython/issues/1503
+ *
+ * .CodeMirror span {
+ *      vertical-align: bottom;
+ * }
+ */
+.CodeMirror {
+  line-height: 1.21429em;
+  /* Changed from 1em to our global default */
+  font-size: 14px;
+  height: auto;
+  /* Changed to auto to autogrow */
+  background: none;
+  /* Changed from white to allow our bg to show through */
+}
+.CodeMirror-scroll {
+  /*  The CodeMirror docs are a bit fuzzy on if overflow-y should be hidden or visible.*/
+  /*  We have found that if it is visible, vertical scrollbars appear with font size changes.*/
+  overflow-y: hidden;
+  overflow-x: auto;
+}
+.CodeMirror-lines {
+  /* In CM2, this used to be 0.4em, but in CM3 it went to 4px. We need the em value because */
+  /* we have set a different line-height and want this to scale with that. */
+  padding: 0.4em;
+}
+.CodeMirror-linenumber {
+  padding: 0 8px 0 4px;
+}
+.CodeMirror-gutters {
+  border-bottom-left-radius: 2px;
+  border-top-left-radius: 2px;
+}
+.CodeMirror pre {
+  /* In CM3 this went to 4px from 0 in CM2. We need the 0 value because of how we size */
+  /* .CodeMirror-lines */
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+}
+/*
+
+Original style from softwaremaniacs.org (c) Ivan Sagalaev <Maniac@SoftwareManiacs.Org>
+Adapted from GitHub theme
+
+*/
+.highlight-base {
+  color: #000;
+}
+.highlight-variable {
+  color: #000;
+}
+.highlight-variable-2 {
+  color: #1a1a1a;
+}
+.highlight-variable-3 {
+  color: #333333;
+}
+.highlight-string {
+  color: #BA2121;
+}
+.highlight-comment {
+  color: #408080;
+  font-style: italic;
+}
+.highlight-number {
+  color: #080;
+}
+.highlight-atom {
+  color: #88F;
+}
+.highlight-keyword {
+  color: #008000;
+  font-weight: bold;
+}
+.highlight-builtin {
+  color: #008000;
+}
+.highlight-error {
+  color: #f00;
+}
+.highlight-operator {
+  color: #AA22FF;
+  font-weight: bold;
+}
+.highlight-meta {
+  color: #AA22FF;
+}
+/* previously not defined, copying from default codemirror */
+.highlight-def {
+  color: #00f;
+}
+.highlight-string-2 {
+  color: #f50;
+}
+.highlight-qualifier {
+  color: #555;
+}
+.highlight-bracket {
+  color: #997;
+}
+.highlight-tag {
+  color: #170;
+}
+.highlight-attribute {
+  color: #00c;
+}
+.highlight-header {
+  color: blue;
+}
+.highlight-quote {
+  color: #090;
+}
+.highlight-link {
+  color: #00c;
+}
+/* apply the same style to codemirror */
+.cm-s-ipython span.cm-keyword {
+  color: #008000;
+  font-weight: bold;
+}
+.cm-s-ipython span.cm-atom {
+  color: #88F;
+}
+.cm-s-ipython span.cm-number {
+  color: #080;
+}
+.cm-s-ipython span.cm-def {
+  color: #00f;
+}
+.cm-s-ipython span.cm-variable {
+  color: #000;
+}
+.cm-s-ipython span.cm-operator {
+  color: #AA22FF;
+  font-weight: bold;
+}
+.cm-s-ipython span.cm-variable-2 {
+  color: #1a1a1a;
+}
+.cm-s-ipython span.cm-variable-3 {
+  color: #333333;
+}
+.cm-s-ipython span.cm-comment {
+  color: #408080;
+  font-style: italic;
+}
+.cm-s-ipython span.cm-string {
+  color: #BA2121;
+}
+.cm-s-ipython span.cm-string-2 {
+  color: #f50;
+}
+.cm-s-ipython span.cm-meta {
+  color: #AA22FF;
+}
+.cm-s-ipython span.cm-qualifier {
+  color: #555;
+}
+.cm-s-ipython span.cm-builtin {
+  color: #008000;
+}
+.cm-s-ipython span.cm-bracket {
+  color: #997;
+}
+.cm-s-ipython span.cm-tag {
+  color: #170;
+}
+.cm-s-ipython span.cm-attribute {
+  color: #00c;
+}
+.cm-s-ipython span.cm-header {
+  color: blue;
+}
+.cm-s-ipython span.cm-quote {
+  color: #090;
+}
+.cm-s-ipython span.cm-link {
+  color: #00c;
+}
+.cm-s-ipython span.cm-error {
+  color: #f00;
+}
+.cm-s-ipython span.cm-tab {
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAMCAYAAAAkuj5RAAAAAXNSR0IArs4c6QAAAGFJREFUSMft1LsRQFAQheHPowAKoACx3IgEKtaEHujDjORSgWTH/ZOdnZOcM/sgk/kFFWY0qV8foQwS4MKBCS3qR6ixBJvElOobYAtivseIE120FaowJPN75GMu8j/LfMwNjh4HUpwg4LUAAAAASUVORK5CYII=);
+  background-position: right;
+  background-repeat: no-repeat;
+}
+div.output_wrapper {
+  /* this position must be relative to enable descendents to be absolute within it */
+  position: relative;
+  /* Old browsers */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-box-align: stretch;
+  display: -moz-box;
+  -moz-box-orient: vertical;
+  -moz-box-align: stretch;
+  display: box;
+  box-orient: vertical;
+  box-align: stretch;
+  /* Modern browsers */
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  z-index: 1;
+}
+/* class for the output area when it should be height-limited */
+div.output_scroll {
+  /* ideally, this would be max-height, but FF barfs all over that */
+  height: 24em;
+  /* FF needs this *and the wrapper* to specify full width, or it will shrinkwrap */
+  width: 100%;
+  overflow: auto;
+  border-radius: 2px;
+  -webkit-box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.8);
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.8);
+  display: block;
+}
+/* output div while it is collapsed */
+div.output_collapsed {
+  margin: 0px;
+  padding: 0px;
+  /* Old browsers */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-box-align: stretch;
+  display: -moz-box;
+  -moz-box-orient: vertical;
+  -moz-box-align: stretch;
+  display: box;
+  box-orient: vertical;
+  box-align: stretch;
+  /* Modern browsers */
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+div.out_prompt_overlay {
+  height: 100%;
+  padding: 0px 0.4em;
+  position: absolute;
+  border-radius: 2px;
+}
+div.out_prompt_overlay:hover {
+  /* use inner shadow to get border that is computed the same on WebKit/FF */
+  -webkit-box-shadow: inset 0 0 1px #000;
+  box-shadow: inset 0 0 1px #000;
+  background: rgba(240, 240, 240, 0.5);
+}
+div.output_prompt {
+  color: #D84315;
+}
+/* This class is the outer container of all output sections. */
+div.output_area {
+  padding: 0px;
+  page-break-inside: avoid;
+  /* Old browsers */
+  display: -webkit-box;
+  -webkit-box-orient: horizontal;
+  -webkit-box-align: stretch;
+  display: -moz-box;
+  -moz-box-orient: horizontal;
+  -moz-box-align: stretch;
+  display: box;
+  box-orient: horizontal;
+  box-align: stretch;
+  /* Modern browsers */
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+}
+div.output_area .MathJax_Display {
+  text-align: left !important;
+}
+div.output_area 
+div.output_area 
+div.output_area img,
+div.output_area svg {
+  max-width: 100%;
+  height: auto;
+}
+div.output_area img.unconfined,
+div.output_area svg.unconfined {
+  max-width: none;
+}
+/* This is needed to protect the pre formating from global settings such
+   as that of bootstrap */
+.output {
+  /* Old browsers */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-box-align: stretch;
+  display: -moz-box;
+  -moz-box-orient: vertical;
+  -moz-box-align: stretch;
+  display: box;
+  box-orient: vertical;
+  box-align: stretch;
+  /* Modern browsers */
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+@media (max-width: 540px) {
+  div.output_area {
+    /* Old browsers */
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-box-align: stretch;
+    display: -moz-box;
+    -moz-box-orient: vertical;
+    -moz-box-align: stretch;
+    display: box;
+    box-orient: vertical;
+    box-align: stretch;
+    /* Modern browsers */
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+div.output_area pre {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  vertical-align: baseline;
+  color: black;
+  background-color: transparent;
+  border-radius: 0;
+}
+/* This class is for the output subarea inside the output_area and after
+   the prompt div. */
+div.output_subarea {
+  overflow-x: auto;
+  padding: 0.4em;
+  /* Old browsers */
+  -webkit-box-flex: 1;
+  -moz-box-flex: 1;
+  box-flex: 1;
+  /* Modern browsers */
+  flex: 1;
+  max-width: calc(100% - 14ex);
+}
+div.output_scroll div.output_subarea {
+  overflow-x: visible;
+}
+/* The rest of the output_* classes are for special styling of the different
+   output types */
+/* all text output has this class: */
+div.output_text {
+  text-align: left;
+  color: #000;
+  /* This has to match that of the the CodeMirror class line-height below */
+  line-height: 1.21429em;
+}
+/* stdout/stderr are 'text' as well as 'stream', but execute_result/error are *not* streams */
+div.output_stderr {
+  background: #fdd;
+  /* very light red background for stderr */
+}
+div.output_latex {
+  text-align: left;
+}
+/* Empty output_javascript divs should have no height */
+div.output_javascript:empty {
+  padding: 0;
+}
+.js-error {
+  color: darkred;
+}
+/* raw_input styles */
+div.raw_input_container {
+  line-height: 1.21429em;
+  padding-top: 5px;
+}
+pre.raw_input_prompt {
+  /* nothing needed here. */
+}
+input.raw_input {
+  font-family: monospace;
+  font-size: inherit;
+  color: inherit;
+  width: auto;
+  /* make sure input baseline aligns with prompt */
+  vertical-align: baseline;
+  /* padding + margin = 0.5em between prompt and cursor */
+  padding: 0em 0.25em;
+  margin: 0em 0.25em;
+}
+input.raw_input:focus {
+  box-shadow: none;
+}
+p.p-space {
+  margin-bottom: 10px;
+}
+div.output_unrecognized {
+  padding: 5px;
+  font-weight: bold;
+  color: red;
+}
+div.output_unrecognized a {
+  color: inherit;
+  text-decoration: none;
+}
+div.output_unrecognized a:hover {
+  color: inherit;
+  text-decoration: none;
+}
+.rendered_html {
+  color: #000;
+  /* any extras will just be numbers: */
+}
+
+
+
+.rendered_html :link {
+  text-decoration: underline;
+}
+.rendered_html :visited {
+  text-decoration: underline;
+}
+
+
+
+
+
+
+.rendered_html h1:first-child {
+  margin-top: 0.538em;
+}
+.rendered_html h2:first-child {
+  margin-top: 0.636em;
+}
+.rendered_html h3:first-child {
+  margin-top: 0.777em;
+}
+.rendered_html h4:first-child {
+  margin-top: 1em;
+}
+.rendered_html h5:first-child {
+  margin-top: 1em;
+}
+.rendered_html h6:first-child {
+  margin-top: 1em;
+}
+
+
+
+
+
+
+
+
+.rendered_html * + ul {
+  margin-top: 1em;
+}
+.rendered_html * + ol {
+  margin-top: 1em;
+}
+
+
+.rendered_html pre,
+
+
+
+.rendered_html tr,
+.rendered_html th,
+
+.rendered_html td,
+
+
+.rendered_html * + table {
+  margin-top: 1em;
+}
+
+.rendered_html * + p {
+  margin-top: 1em;
+}
+
+.rendered_html * + img {
+  margin-top: 1em;
+}
+.rendered_html img,
+
+.rendered_html img.unconfined,
+
+div.text_cell {
+  /* Old browsers */
+  display: -webkit-box;
+  -webkit-box-orient: horizontal;
+  -webkit-box-align: stretch;
+  display: -moz-box;
+  -moz-box-orient: horizontal;
+  -moz-box-align: stretch;
+  display: box;
+  box-orient: horizontal;
+  box-align: stretch;
+  /* Modern browsers */
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+}
+@media (max-width: 540px) {
+  div.text_cell > div.prompt {
+    display: none;
+  }
+}
+div.text_cell_render {
+  /*font-family: "Helvetica Neue", Arial, Helvetica, Geneva, sans-serif;*/
+  outline: none;
+  resize: none;
+  width: inherit;
+  border-style: none;
+  padding: 0.5em 0.5em 0.5em 0.4em;
+  color: #000;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+}
+a.anchor-link:link {
+  text-decoration: none;
+  padding: 0px 20px;
+  visibility: hidden;
+}
+h1:hover .anchor-link,
+h2:hover .anchor-link,
+h3:hover .anchor-link,
+h4:hover .anchor-link,
+h5:hover .anchor-link,
+h6:hover .anchor-link {
+  visibility: visible;
+}
+.text_cell.rendered .input_area {
+  display: none;
+}
+.text_cell.rendered 
+.text_cell.unrendered .text_cell_render {
+  display: none;
+}
+.cm-header-1,
+.cm-header-2,
+.cm-header-3,
+.cm-header-4,
+.cm-header-5,
+.cm-header-6 {
+  font-weight: bold;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+.cm-header-1 {
+  font-size: 185.7%;
+}
+.cm-header-2 {
+  font-size: 157.1%;
+}
+.cm-header-3 {
+  font-size: 128.6%;
+}
+.cm-header-4 {
+  font-size: 110%;
+}
+.cm-header-5 {
+  font-size: 100%;
+  font-style: italic;
+}
+.cm-header-6 {
+  font-size: 100%;
+  font-style: italic;
+}
+</style>
+<style type="text/css">.highlight .hll { background-color: #ffffcc }
+.highlight  { background: #f8f8f8; }
+.highlight .c { color: #408080; font-style: italic } /* Comment */
+.highlight .err { border: 1px solid #FF0000 } /* Error */
+.highlight .k { color: #008000; font-weight: bold } /* Keyword */
+.highlight .o { color: #666666 } /* Operator */
+.highlight .ch { color: #408080; font-style: italic } /* Comment.Hashbang */
+.highlight .cm { color: #408080; font-style: italic } /* Comment.Multiline */
+.highlight .cp { color: #BC7A00 } /* Comment.Preproc */
+.highlight .cpf { color: #408080; font-style: italic } /* Comment.PreprocFile */
+.highlight .c1 { color: #408080; font-style: italic } /* Comment.Single */
+.highlight .cs { color: #408080; font-style: italic } /* Comment.Special */
+.highlight .gd { color: #A00000 } /* Generic.Deleted */
+.highlight .ge { font-style: italic } /* Generic.Emph */
+.highlight .gr { color: #FF0000 } /* Generic.Error */
+.highlight .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.highlight .gi { color: #00A000 } /* Generic.Inserted */
+.highlight .go { color: #888888 } /* Generic.Output */
+.highlight .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.highlight .gs { font-weight: bold } /* Generic.Strong */
+.highlight .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.highlight .gt { color: #0044DD } /* Generic.Traceback */
+.highlight .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.highlight .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.highlight .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+.highlight .kp { color: #008000 } /* Keyword.Pseudo */
+.highlight .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.highlight .kt { color: #B00040 } /* Keyword.Type */
+.highlight .m { color: #666666 } /* Literal.Number */
+.highlight .s { color: #BA2121 } /* Literal.String */
+.highlight .na { color: #7D9029 } /* Name.Attribute */
+.highlight .nb { color: #008000 } /* Name.Builtin */
+.highlight .nc { color: #0000FF; font-weight: bold } /* Name.Class */
+.highlight .no { color: #880000 } /* Name.Constant */
+.highlight .nd { color: #AA22FF } /* Name.Decorator */
+.highlight .ni { color: #999999; font-weight: bold } /* Name.Entity */
+.highlight .ne { color: #D2413A; font-weight: bold } /* Name.Exception */
+.highlight .nf { color: #0000FF } /* Name.Function */
+.highlight .nl { color: #A0A000 } /* Name.Label */
+.highlight .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
+.highlight .nt { color: #008000; font-weight: bold } /* Name.Tag */
+.highlight .nv { color: #19177C } /* Name.Variable */
+.highlight .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
+.highlight .w { color: #bbbbbb } /* Text.Whitespace */
+.highlight .mb { color: #666666 } /* Literal.Number.Bin */
+.highlight .mf { color: #666666 } /* Literal.Number.Float */
+.highlight .mh { color: #666666 } /* Literal.Number.Hex */
+.highlight .mi { color: #666666 } /* Literal.Number.Integer */
+.highlight .mo { color: #666666 } /* Literal.Number.Oct */
+.highlight .sb { color: #BA2121 } /* Literal.String.Backtick */
+.highlight .sc { color: #BA2121 } /* Literal.String.Char */
+.highlight .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.highlight .s2 { color: #BA2121 } /* Literal.String.Double */
+.highlight .se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
+.highlight .sh { color: #BA2121 } /* Literal.String.Heredoc */
+.highlight .si { color: #BB6688; font-weight: bold } /* Literal.String.Interpol */
+.highlight .sx { color: #008000 } /* Literal.String.Other */
+.highlight .sr { color: #BB6688 } /* Literal.String.Regex */
+.highlight .s1 { color: #BA2121 } /* Literal.String.Single */
+.highlight .ss { color: #19177C } /* Literal.String.Symbol */
+.highlight .bp { color: #008000 } /* Name.Builtin.Pseudo */
+.highlight .vc { color: #19177C } /* Name.Variable.Class */
+.highlight .vg { color: #19177C } /* Name.Variable.Global */
+.highlight .vi { color: #19177C } /* Name.Variable.Instance */
+.highlight .il { color: #666666 } /* Literal.Number.Integer.Long */</style>
+<style type="text/css">
+/* Temporary definitions which will become obsolete with Notebook release 5.0 */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-bold { font-weight: bold; }
+</style>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Hot-News-Come-From-tweets">Hot News Come From tweets<a class="anchor-link" href="#Hot-News-Come-From-tweets">¶</a></h1><p>Say we want to separate the really hot news from the bulk of regular updates. One method is to look at the tweets from news agencies. But there are still normal important feeds all mixed up together. In this the following two posts, I presnt you my apploach to extract hot topics from the news feeds.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Extract-and-Store-Data">Extract and Store Data<a class="anchor-link" href="#Extract-and-Store-Data">¶</a></h2><p>Any data driven analysis requires valid data. Here, we use tweeter to extract post from news agengies. The data is stored locally in a MongoDB database and is later used to gain ingight regarding the trends and hot news. The plan is to run this code frequently (like every 5 min) and monitor the new tweets in each retreival. Therfore, the id and timestamp of last captured tweet is stored for each agency and used in the next iteration for the starting point.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Let's take a look at python packages that we are going to use:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [ ]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">tweepy</span>    <span class="c1"># handles connection and requests to tweeter </span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">setting</span> <span class="c1">#this file contains the variables for our analysis like the reading</span>
+               <span class="c1"># frequency and access tokens</span>
+<span class="kn">import</span> <span class="nn">pymongo</span>
+<span class="kn">from</span> <span class="nn">pymongo</span> <span class="k">import</span> <span class="n">MongoClient</span>    <span class="c1"># handles connection, access, read and write </span>
+                                   <span class="c1">#with the MongoDB database server</span>
+<span class="kn">from</span> <span class="nn">dateutil</span> <span class="k">import</span> <span class="n">tz</span>
+<span class="kn">from</span> <span class="nn">pymongo.errors</span> <span class="k">import</span> <span class="n">BulkWriteError</span><span class="p">,</span> <span class="n">InvalidOperation</span>   
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The code is seperated into several methods. <em>initialize_api()</em> setups the conneciton credential with tweeter and returns an API. The access TOKENS are stored in a setting file and are not directly coded here. You can get your own access info by creating a twitter account and gettin your API credentials on the Twitter API page.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [ ]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="sd">''' method that loads the twitter API after authorizing the user. '''</span>
+<span class="k">def</span> <span class="nf">initialize_api</span><span class="p">():</span>
+    <span class="n">consumer_key</span> <span class="o">=</span>  <span class="n">setting</span><span class="o">.</span><span class="n">CONSUMER_KEY</span>
+    <span class="n">consumer_secret</span> <span class="o">=</span> <span class="n">setting</span><span class="o">.</span><span class="n">CONSUMER_SECRET</span>
+    <span class="n">access_token</span> <span class="o">=</span> <span class="n">setting</span><span class="o">.</span><span class="n">ACCESS_TOKEN</span>
+    <span class="n">access_secret</span> <span class="o">=</span> <span class="n">setting</span><span class="o">.</span><span class="n">ACCESS_SECRET</span>
+    <span class="n">auth</span> <span class="o">=</span> <span class="n">tweepy</span><span class="o">.</span><span class="n">OAuthHandler</span><span class="p">(</span><span class="n">consumer_key</span><span class="p">,</span> <span class="n">consumer_secret</span><span class="p">)</span>
+    <span class="n">auth</span><span class="o">.</span><span class="n">set_access_token</span><span class="p">(</span><span class="n">access_token</span><span class="p">,</span> <span class="n">access_secret</span><span class="p">)</span>
+    <span class="c1"># load the twitter API via tweepy</span>
+    <span class="k">return</span> <span class="n">tweepy</span><span class="o">.</span><span class="n">API</span><span class="p">(</span><span class="n">auth</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>the <em>tweet_search()</em> method is our key tweet capturing function. For each given target user (news agency in our case), it returns all the <em>new</em> tweets. In this work, after each such capturing, we explicitally store the <strong>id</strong> of the last tweet (max_id) and used it as the starting point of the next round (since_id).</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [ ]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="sd">''' method that takes  a user_name as a query, the maximum,</span>
+<span class="sd">         number of tweets 'max_tweets', and the minimum (i.e., starting)</span>
+<span class="sd">         tweet id. It returns a list of the user's tweets with ids greater than since_id'''</span>
+<span class="k">def</span> <span class="nf">tweet_search</span><span class="p">(</span><span class="n">api</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">max_tweets</span><span class="p">,</span>  <span class="n">since_id</span><span class="p">):</span>
+
+    <span class="n">searched_tweets</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">max_id</span> <span class="o">=</span> <span class="n">since_id</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">searched_tweets</span> <span class="o">=</span> <span class="n">api</span><span class="o">.</span><span class="n">user_timeline</span><span class="p">(</span><span class="n">screen_name</span><span class="o">=</span><span class="n">query</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="n">max_tweets</span><span class="p">,</span>
+                                <span class="n">since_id</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">since_id</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">debug</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">'found'</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">searched_tweets</span><span class="p">),</span><span class="s1">'tweets'</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">searched_tweets</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">debug</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">'no tweets found'</span><span class="p">)</span>
+            <span class="n">max_id</span> <span class="o">=</span> <span class="n">since_id</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">max_id</span> <span class="o">=</span> <span class="n">searched_tweets</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">id</span>
+    <span class="k">except</span> <span class="n">tweepy</span><span class="o">.</span><span class="n">TweepError</span><span class="p">:</span>
+        <span class="nb">print</span> <span class="p">(</span><span class="s1">'exception raised, waiting 5 seconds'</span><span class="p">)</span>
+        <span class="nb">print</span> <span class="p">(</span><span class="s1">'(until:'</span><span class="p">,</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">+</span><span class="n">dt</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">seconds</span><span class="o">=</span><span class="mi">5</span><span class="p">),</span> <span class="s1">')'</span><span class="p">)</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">searched_tweets</span><span class="p">,</span> <span class="n">max_id</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The <em>get_tweet_since_id()</em>, returns the <em>id</em> of the last tweets on a specific data or the most recent tweets depending on its inputs. This id is critial to separate new vs old tweets.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [ ]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="sd">''' method that gives the ID of a tweet. This ID can then be used as a 'starting point' from which to search. '''</span>
+<span class="k">def</span> <span class="nf">get_tweet_since_id</span><span class="p">(</span><span class="n">api</span><span class="p">,</span> <span class="n">date</span><span class="o">=</span><span class="s1">''</span><span class="p">,</span><span class="n">minutes_ago</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">query</span><span class="o">=</span><span class="s1">'a'</span><span class="p">):</span>
+
+    <span class="k">try</span><span class="p">:</span> 
+        <span class="k">if</span> <span class="n">date</span><span class="o">!=</span><span class="s1">''</span><span class="p">:</span>
+            <span class="c1"># return an ID from the start of the given day</span>
+            <span class="n">td</span> <span class="o">=</span> <span class="n">date</span> <span class="c1">#+ dt.timedelta(hours=1)</span>
+            <span class="n">tweet_date</span> <span class="o">=</span> <span class="s1">'</span><span class="si">{0}</span><span class="s1">-</span><span class="si">{1:0>2}</span><span class="s1">-</span><span class="si">{2:0>2}</span><span class="s1">-</span><span class="si">{3:0>2}</span><span class="s1">-</span><span class="si">{4:0>2}</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">td</span><span class="o">.</span><span class="n">year</span><span class="p">,</span> <span class="n">td</span><span class="o">.</span><span class="n">month</span><span class="p">,</span> <span class="n">td</span><span class="o">.</span><span class="n">day</span><span class="p">)</span>
+            <span class="n">tweet</span> <span class="o">=</span> <span class="n">api</span><span class="o">.</span><span class="n">user_timeline</span><span class="p">(</span><span class="n">q</span><span class="o">=</span><span class="n">query</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">until</span><span class="o">=</span><span class="n">tweet_date</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">debug</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">'search limit (start point) created_at:'</span><span class="p">,</span><span class="n">tweet</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">created_at</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># return an ID from __ minutes ago</span>
+            <span class="n">td</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span> <span class="o">-</span>  <span class="n">dt</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="n">minutes_ago</span><span class="p">)</span> 
+            <span class="n">tweet_date</span> <span class="o">=</span> <span class="s1">'</span><span class="si">{0}</span><span class="s1">-</span><span class="si">{1:0>2}</span><span class="s1">-</span><span class="si">{2:0>2}</span><span class="s1">-</span><span class="si">{3:0>2}</span><span class="s1">-</span><span class="si">{4:0>2}</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">td</span><span class="o">.</span><span class="n">year</span><span class="p">,</span> <span class="n">td</span><span class="o">.</span><span class="n">month</span><span class="p">,</span> <span class="n">td</span><span class="o">.</span><span class="n">day</span><span class="p">,</span><span class="n">td</span><span class="o">.</span><span class="n">hour</span><span class="p">,</span> <span class="n">td</span><span class="o">.</span><span class="n">minute</span><span class="p">)</span>
+            <span class="c1"># get list of 100 tweets and then return the id of oldest one as the starting point</span>
+            <span class="n">tweet</span> <span class="o">=</span> <span class="n">api</span><span class="o">.</span><span class="n">user_timeline</span><span class="p">(</span><span class="n">screen_name</span><span class="o">=</span><span class="n">query</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="n">setting</span><span class="o">.</span><span class="n">MAX_TWEETS</span><span class="p">,</span><span class="n">until</span> <span class="o">=</span> <span class="n">tweet_date</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">debug</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">formatUtcToLocal</span><span class="p">(</span><span class="n">td</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">tweet</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">debug</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">'search limit (start point) created_at:'</span><span class="p">,</span><span class="n">formatUtcToLocal</span><span class="p">(</span><span class="n">tweet</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">created_at</span><span class="p">))</span>
+                <span class="k">return</span> <span class="n">tweet</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">id</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">debug</span><span class="p">:</span>
+                    <span class="nb">print</span> <span class="p">(</span><span class="s1">'no tweet since_id found'</span><span class="p">)</span>
+
+    <span class="k">except</span> <span class="n">tweepy</span><span class="o">.</span><span class="n">TweepError</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">'exception raised, waiting 5 seconds'</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">'(until:'</span><span class="p">,</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">+</span><span class="n">dt</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">seconds</span><span class="o">=</span><span class="mi">5</span><span class="p">),</span> <span class="s1">')'</span><span class="p">)</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The tweet capturing procedure is:
+For each news agency:</p>
+<pre><code>1. check the data base for the *id* of the last stored tweet
+    1.1. if such history exists: use that for the starting point of reading new tweets
+    1.2. if not: generate a starting point based on the time you want between readings
+2.use gather_news() method to read, clean and store new tweets</code></pre>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [ ]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">get_news_tweets</span><span class="p">():</span>
+    <span class="sd">''' This is a script that are looking for news tweets</span>
+<span class="sd">        that are created by a group of news agencies.  '''</span>
+    <span class="n">news_agencies_list</span> <span class="o">=</span> <span class="n">read_news_agencies_from_file</span><span class="p">(</span><span class="n">setting</span><span class="o">.</span><span class="n">NEWS_AGENCIES_NAMES</span><span class="p">);</span>
+    <span class="n">time_limit</span> <span class="o">=</span> <span class="n">setting</span><span class="o">.</span><span class="n">RNUTIME_LIMIT</span>         <span class="c1"># runtime limit in seconds</span>
+    <span class="n">max_tweets</span> <span class="o">=</span> <span class="n">setting</span><span class="o">.</span><span class="n">MAX_TWEETS</span>       <span class="c1"># number of tweets per search - maximum is 100</span>
+    
+    <span class="n">max_minutes_old</span> <span class="o">=</span> <span class="n">setting</span><span class="o">.</span><span class="n">MAX_MIN_OLD</span> <span class="c1"># search tweet from  current_time - maximum minutes_old </span>
+
+    <span class="c1"># search over news agencies to get their tweets</span>
+    <span class="k">for</span> <span class="n">screen_name</span> <span class="ow">in</span> <span class="n">news_agencies_list</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="n">debug</span><span class="p">:</span>
+            <span class="nb">print</span> <span class="p">(</span><span class="s1">'Screen name ='</span><span class="p">,</span> <span class="n">screen_name</span><span class="p">)</span>
+
+        <span class="n">read_since_IDs</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="c1"># connect to the collection in which the new agencies are stored</span>
+        <span class="n">NA_row</span> <span class="o">=</span> <span class="n">collectionNA</span><span class="o">.</span><span class="n">find_one</span><span class="p">({</span><span class="s1">'news_agencies'</span><span class="p">:</span><span class="n">screen_name</span><span class="p">})</span>
+        <span class="c1"># if we already entered data for this news agency</span>
+        <span class="k">if</span> <span class="n">NA_row</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">debug</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">'Get the starting point ID for tweet search from the collection'</span><span class="p">)</span>
+            <span class="n">read_since_IDs</span> <span class="o">=</span> <span class="kc">True</span>
+        
+        <span class="c1"># authorize and load the twitter API</span>
+        <span class="n">api</span> <span class="o">=</span> <span class="n">initialize_api</span><span class="p">()</span>
+
+        <span class="c1"># set the 'starting point' ID for tweet search</span>
+        <span class="k">if</span> <span class="n">read_since_IDs</span><span class="p">:</span>
+            <span class="n">since_id</span> <span class="o">=</span> <span class="n">NA_row</span><span class="p">[</span><span class="s1">'max_id'</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">since_id</span> <span class="o">=</span><span class="n">get_tweet_since_id</span><span class="p">(</span><span class="n">api</span><span class="p">,</span> <span class="n">minutes_ago</span><span class="o">=</span><span class="p">(</span><span class="n">max_minutes_old</span><span class="p">),</span><span class="n">query</span><span class="o">=</span><span class="n">screen_name</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">debug</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">'since id (starting point) ='</span><span class="p">,</span> <span class="n">since_id</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">'current_date: '</span><span class="p">,</span><span class="n">formatUtcToLocal</span><span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()));</span>
+
+        <span class="n">bulk</span> <span class="o">=</span> <span class="n">collectionNT</span><span class="o">.</span><span class="n">initialize_unordered_bulk_op</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">since_id</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="n">gather_tweets</span><span class="p">(</span><span class="n">api</span><span class="p">,</span><span class="n">screen_name</span><span class="p">,</span> <span class="n">max_tweets</span><span class="p">,</span> <span class="n">since_id</span><span class="p">,</span> <span class="n">time_limit</span><span class="p">,</span> <span class="n">bulk</span><span class="p">,</span><span class="n">read_since_IDs</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Now that we decided on the starting pointm we can read new tweets. Then we parse the tweet json and store useful information in the database. We additionally store the timestamp and id of the last tweet for later recalls.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [ ]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">gather_tweets</span><span class="p">(</span><span class="n">api</span><span class="p">,</span><span class="n">screen_name</span><span class="p">,</span> <span class="n">max_tweets</span><span class="p">,</span> <span class="n">since_id</span><span class="p">,</span> <span class="n">time_limit</span><span class="p">,</span><span class="n">bulk</span><span class="p">,</span><span class="n">read_since_IDs</span><span class="p">):</span>
+    <span class="sd">'''going through tweets'''</span>
+    <span class="n">start</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+    <span class="n">end</span> <span class="o">=</span> <span class="n">start</span> <span class="o">+</span> <span class="n">dt</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">seconds</span><span class="o">=</span><span class="n">time_limit</span><span class="p">)</span>
+    <span class="n">count</span><span class="p">,</span> <span class="n">exitcount</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+    <span class="n">max_timestamp</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+
+    <span class="k">while</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span> <span class="o"><</span> <span class="n">end</span><span class="p">:</span> 
+        <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">debug</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">'count ='</span><span class="p">,</span><span class="n">count</span><span class="p">)</span>
+        
+        <span class="c1"># collect tweets and update max_id</span>
+        <span class="n">tweets</span><span class="p">,</span> <span class="n">max_id</span> <span class="o">=</span> <span class="n">tweet_search</span><span class="p">(</span><span class="n">api</span><span class="p">,</span> <span class="n">screen_name</span><span class="p">,</span> <span class="n">max_tweets</span><span class="p">,</span>
+                                       <span class="n">since_id</span><span class="o">=</span><span class="n">since_id</span><span class="p">)</span>
+        <span class="n">since_id</span> <span class="o">=</span> <span class="n">max_id</span>
+        <span class="k">if</span> <span class="n">tweets</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">tweet</span> <span class="ow">in</span> <span class="n">tweets</span><span class="p">:</span>
+                
+                <span class="c1"># prepare tweet features to be stored in mongodb collection</span>
+                <span class="p">[</span><span class="n">tweet_ctime</span><span class="p">,</span> <span class="n">tweet_id</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">hashtags</span><span class="p">,</span> <span class="n">users</span><span class="p">,</span> <span class="n">urls</span><span class="p">,</span> <span class="n">media_urls</span><span class="p">,</span> <span class="n">nfollowers</span><span class="p">,</span> <span class="n">nfriends</span><span class="p">]</span> <span class="o">=</span> <span class="n">parse_json_tweet</span><span class="p">(</span><span class="n">tweet</span><span class="p">)</span>
+                <span class="c1"># igonre tweets with no created_at time</span>
+                <span class="k">if</span> <span class="n">tweet_ctime</span><span class="p">:</span>
+                    <span class="c1"># provide a timestamp for each tweet from its created_at time</span>
+                    <span class="n">tweet_mytime</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">mktime</span><span class="p">(</span><span class="n">tweet_ctime</span><span class="o">.</span><span class="n">timetuple</span><span class="p">()))</span>
+                    
+                    <span class="c1"># get the maximum timestamp to be kept as an information in our collectionNA</span>
+                    <span class="k">if</span> <span class="n">tweet_mytime</span> <span class="o">></span> <span class="n">max_timestamp</span><span class="p">:</span>
+                        <span class="n">max_timestamp</span> <span class="o">=</span> <span class="n">tweet_mytime</span>
+
+                    <span class="n">Item</span><span class="o">=</span><span class="p">{</span><span class="s1">'source'</span><span class="p">:</span><span class="n">screen_name</span><span class="p">,</span><span class="s1">'id'</span><span class="p">:</span><span class="n">tweet_id</span><span class="p">,</span>
+                        <span class="s1">'time_in_secs'</span><span class="p">:</span><span class="n">tweet_mytime</span><span class="p">,</span>
+                        <span class="s1">'text'</span><span class="p">:</span><span class="n">text</span><span class="p">,</span><span class="s1">'created_at'</span><span class="p">:</span><span class="n">tweet_ctime</span><span class="p">,</span>
+                        <span class="s1">'hashtags'</span><span class="p">:</span><span class="n">hashtags</span><span class="p">,</span><span class="s1">'users'</span><span class="p">:</span><span class="n">users</span><span class="p">,</span> <span class="s1">'media_urls'</span><span class="p">:</span><span class="n">media_urls</span><span class="p">,</span> <span class="s1">'urls'</span><span class="p">:</span><span class="n">urls</span><span class="p">,</span>
+                        <span class="s1">'nfollowers'</span><span class="p">:</span><span class="n">nfollowers</span><span class="p">,</span><span class="s1">'nfriends'</span><span class="p">:</span><span class="n">nfriends</span><span class="p">}</span>
+                    <span class="n">bulk</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">Item</span><span class="p">)</span>    
+                                                
+            <span class="n">exitcount</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">bulk</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
+            
+            <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">read_since_IDs</span><span class="p">):</span>
+                <span class="k">break</span>
+        <span class="c1"># if for exitcount=3 times, no tweet found, we'll break the loop</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">exitcount</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">exitcount</span> <span class="o">==</span> <span class="n">setting</span><span class="o">.</span><span class="n">EXITCOUNT</span><span class="p">:</span>
+                <span class="c1"># if screen_name == search_phrases[-1]:</span>
+                <span class="c1"># 	sys.exit('Maximum number of empty tweet strings reached - exiting')</span>
+                <span class="c1"># else:</span>
+                <span class="k">if</span> <span class="n">debug</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">'Maximum number of empty tweet strings reached - break'</span><span class="p">)</span>
+                <span class="k">break</span>
+    
+
+    <span class="k">if</span> <span class="n">since_id</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'news_agencies'</span><span class="p">:</span><span class="n">screen_name</span><span class="p">}</span>
+        <span class="n">collectionNA</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">'news_agencies'</span><span class="p">:</span><span class="n">screen_name</span><span class="p">},</span> <span class="p">{</span><span class="s2">"$set"</span><span class="p">:{</span><span class="s1">'max_id'</span><span class="p">:</span><span class="n">since_id</span><span class="p">,</span> <span class="s1">'max_timestamp'</span><span class="p">:</span> <span class="n">max_timestamp</span><span class="p">,</span> <span class="s1">'modified_date'</span><span class="p">:</span><span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()}},</span> <span class="n">upsert</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>There are other useful modules for adjusting of time deference between the local time and the time of tweet's origin, reading the news agency tweeter ids and parsing json data.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [ ]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="sd">'''convert UTC time to the local time'''</span>
+<span class="k">def</span> <span class="nf">utcToLocal</span><span class="p">(</span><span class="n">utcTime</span><span class="p">):</span>
+        <span class="c1">#Auto-detect zones:</span>
+        <span class="n">from_zone</span> <span class="o">=</span> <span class="n">tz</span><span class="o">.</span><span class="n">tzutc</span><span class="p">()</span>
+        <span class="n">to_zone</span> <span class="o">=</span> <span class="n">tz</span><span class="o">.</span><span class="n">tzlocal</span><span class="p">()</span>
+        <span class="c1"># Tell the datetime object that it's in UTC time zone since </span>
+        <span class="c1"># datetime objects are 'naive' by default</span>
+        <span class="n">utc</span> <span class="o">=</span> <span class="n">utcTime</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">tzinfo</span> <span class="o">=</span> <span class="n">from_zone</span><span class="p">)</span>
+        <span class="c1"># Convert time zone</span>
+        <span class="k">return</span> <span class="n">utc</span><span class="o">.</span><span class="n">astimezone</span><span class="p">(</span><span class="n">to_zone</span><span class="p">)</span>
+
+<span class="c1"># format a UTC time converted to the local time</span>
+<span class="k">def</span> <span class="nf">formatUtcToLocal</span><span class="p">(</span><span class="n">utcTime</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">'</span><span class="si">%d</span><span class="s1">-%m-%Y %H:%M:%S'</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">utcToLocal</span><span class="p">(</span><span class="n">utcTime</span><span class="p">)</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="nb">format</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The focus of this study is the tweets from major news agencie. A list of such agencies is stored in a text file for easy modification.</p>
+<p>New York Times <a href="https://twitter.com/nytimes">https://twitter.com/nytimes</a>
+The Sun <a href="https://twitter.com/thesun">https://twitter.com/thesun</a>
+The Times <a href="https://twitter.com/thetimes">https://twitter.com/thetimes</a>
+The Associated Press <a href="https://twitter.com/ap">https://twitter.com/ap</a>
+CNN <a href="https://twitter.com/cnn">https://twitter.com/cnn</a>
+BBC NEWS <a href="https://twitter.com/bbcnews">https://twitter.com/bbcnews</a>
+CNET <a href="https://twitter.com/cnet">https://twitter.com/cnet</a>
+MSN UK <a href="https://twitter.com/msnuk">https://twitter.com/msnuk</a>
+Telegraph <a href="https://twitter.com/telegraph">https://twitter.com/telegraph</a>
+USAToday <a href="https://twitter.com/usatoday">https://twitter.com/usatoday</a>
+Wall Street Journal <a href="https://twitter.com/wsj">https://twitter.com/wsj</a>
+Washington Post <a href="https://twitter.com/washingtonpost">https://twitter.com/washingtonpost</a>
+Boston Globe <a href="https://twitter.com/bostonglobe">https://twitter.com/bostonglobe</a>
+NEWS.com.au <a href="https://twitter.com/newscomauhq">https://twitter.com/newscomauhq</a>
+Sky News <a href="https://twitter.com/skynews">https://twitter.com/skynews</a>
+SFGate <a href="https://twitter.com/sfgate">https://twitter.com/sfgate</a>
+Al-Jazeera <a href="https://twitter.com/ajenglish">https://twitter.com/ajenglish</a>
+Independent, UK <a href="https://twitter.com/independent">https://twitter.com/independent</a>
+Guardian.co.uk <a href="https://twitter.com/guardian">https://twitter.com/guardian</a>
+LA Times <a href="https://twitter.com/latimes">https://twitter.com/latimes</a>
+Reuters <a href="https://twitter.com/reutersagency">https://twitter.com/reutersagency</a>
+ABC News <a href="https://twitter.com/abc">https://twitter.com/abc</a>
+Bloomberg <a href="https://twitter.com/business">https://twitter.com/business</a>
+Business Week <a href="https://twitter.com/bw">https://twitter.com/bw</a>
+Time <a href="https://twitter.com/time">https://twitter.com/time</a></p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [ ]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Read the list of desired news agencies from a file    </span>
+<span class="k">def</span> <span class="nf">read_news_agencies_from_file</span><span class="p">(</span><span class="n">file_name</span><span class="o">=</span><span class="s1">''</span><span class="p">):</span>
+    <span class="n">file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s1">'r'</span><span class="p">)</span>
+    <span class="n">lis</span> <span class="o">=</span><span class="p">[]</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">file</span><span class="p">:</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span> <span class="s1">''</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">","</span><span class="p">,</span> <span class="s1">''</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="n">lis</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+    <span class="n">file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">lis</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [ ]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># get features of each tweet from the twitter API which is in JSON format</span>
+<span class="k">def</span> <span class="nf">parse_json_tweet</span><span class="p">(</span><span class="n">tweet</span><span class="p">):</span>
+    <span class="c1"># skip non-enlish tweets</span>
+    <span class="k">if</span> <span class="n">tweet</span><span class="o">.</span><span class="n">lang</span> <span class="o">!=</span> <span class="s1">'en'</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span> <span class="p">,</span> <span class="s1">''</span><span class="p">,</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[],[],</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">date</span> <span class="o">=</span> <span class="n">tweet</span><span class="o">.</span><span class="n">created_at</span>
+    <span class="nb">id</span> <span class="o">=</span> <span class="n">tweet</span><span class="o">.</span><span class="n">id</span>
+    <span class="n">nfollowers</span> <span class="o">=</span> <span class="n">tweet</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">followers_count</span>
+    <span class="n">nfriends</span> <span class="o">=</span> <span class="n">tweet</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">friends_count</span>
+
+    <span class="n">text</span> <span class="o">=</span> <span class="n">tweet</span><span class="o">.</span><span class="n">text</span>
+
+    <span class="n">hashtags</span><span class="o">=</span><span class="p">[]</span>
+    <span class="n">hashtags</span> <span class="o">=</span> <span class="p">[</span><span class="n">hashtag</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'text'</span><span class="p">,[])</span> <span class="k">for</span> <span class="n">hashtag</span> <span class="ow">in</span> <span class="n">tweet</span><span class="o">.</span><span class="n">entities</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'hashtags'</span><span class="p">,{})]</span>
+
+    <span class="n">users</span><span class="o">=</span><span class="p">[]</span>
+    <span class="n">users</span> <span class="o">=</span> <span class="p">[</span><span class="n">user_mention</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'screen_name'</span><span class="p">,[])</span> <span class="k">for</span> <span class="n">user_mention</span> <span class="ow">in</span> <span class="n">tweet</span><span class="o">.</span><span class="n">entities</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'user_mentions'</span><span class="p">,{})]</span>
+    
+    <span class="n">urls</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">urls</span> <span class="o">=</span> <span class="p">[</span><span class="n">url</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'expanded_url'</span><span class="p">,[])</span> <span class="k">for</span> <span class="n">url</span> <span class="ow">in</span> <span class="n">tweet</span><span class="o">.</span><span class="n">entities</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'urls'</span><span class="p">,{})]</span>
+    
+    <span class="n">media_urls</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">media_urls</span> <span class="o">=</span> <span class="p">[</span><span class="n">media</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'media_url'</span><span class="p">,[])</span> <span class="k">for</span> <span class="n">media</span> <span class="ow">in</span> <span class="n">tweet</span><span class="o">.</span><span class="n">entities</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'media'</span><span class="p">,{})]</span>  
+
+    <span class="k">return</span> <span class="p">[</span><span class="n">date</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">hashtags</span><span class="p">,</span> <span class="n">users</span><span class="p">,</span> <span class="n">urls</span><span class="p">,</span> <span class="n">media_urls</span><span class="p">,</span> <span class="n">nfollowers</span><span class="p">,</span> <span class="n">nfriends</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Main-Code">Main Code<a class="anchor-link" href="#Main-Code">¶</a></h3><p>Finally our main code, it simply initiates a connection to the databse and uses the defined methods to read, clean and store the new tweets at each run.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [ ]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+   
+    <span class="c1">#connect to thenewstweets db on local server</span>
+    <span class="n">client</span> <span class="o">=</span> <span class="n">MongoClient</span><span class="p">(</span><span class="s2">"localhost"</span><span class="p">,</span> <span class="mi">27017</span><span class="p">)</span>
+    <span class="n">db</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">news_collector</span>
+
+
+    <span class="n">collectionNA</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">newsagencies</span>
+    <span class="n">collectionNT</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">news</span>
+    
+    <span class="c1">#debug = setting.DEBUG</span>
+    <span class="n">debug</span><span class="o">=</span><span class="kc">False</span>
+    <span class="n">get_news_tweets</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Some-Data-Visualization">Some Data Visualization<a class="anchor-link" href="#Some-Data-Visualization">¶</a></h2><p>Before going deep into the captured data in the next post, let's do some explatory data analysis on the stored tweets. For the past retreived tweets, we count the occurrance of each non trivial word and plot the par plot first followed by a word cloud of most used words.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [15]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">nltk.corpus</span> <span class="k">import</span> <span class="n">stopwords</span>
+<span class="kn">import</span> <span class="nn">nltk</span>
+<span class="c1">#nltk.download()</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">Counter</span>
+<span class="kn">import</span> <span class="nn">heapq</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="k">import</span> <span class="n">islice</span><span class="p">,</span> <span class="n">chain</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="c1"># Importing graphics related libraries</span>
+<span class="o">%</span><span class="k">matplotlib</span> inline
+<span class="kn">import</span> <span class="nn">matplotlib</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pylab</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>  <span class="c1"># plots are prettier with Seaborn</span>
+
+<span class="kn">from</span> <span class="nn">wordcloud</span> <span class="k">import</span> <span class="n">WordCloud</span>
+<span class="kn">from</span> <span class="nn">IPython.display</span> <span class="k">import</span> <span class="n">Image</span>
+<span class="kn">from</span> <span class="nn">IPython</span> <span class="k">import</span> <span class="n">display</span>
+
+
+<span class="c1">#connect to the newstweets db on local server</span>
+<span class="n">client</span> <span class="o">=</span> <span class="n">MongoClient</span><span class="p">(</span><span class="s2">"localhost"</span><span class="p">,</span> <span class="mi">27017</span><span class="p">)</span>
+<span class="n">db</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">news_collector</span>
+<span class="n">collectionNA</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">newsagencies</span>
+<span class="n">collectionNT</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">news</span>
+
+<span class="n">time_window_mins</span> <span class="o">=</span> <span class="n">setting</span><span class="o">.</span><span class="n">SUB_WINDOW_MIN</span> <span class="c1">#  sub-window time</span>
+<span class="n">total_time_window_mins</span> <span class="o">=</span> <span class="n">setting</span><span class="o">.</span><span class="n">TOTAL_WINDOW_MIN</span> <span class="c1"># total-window time (that may or maynot be equal to sub time window)</span>
+
+<span class="n">debug</span><span class="o">=</span><span class="n">setting</span><span class="o">.</span><span class="n">DEBUG</span>
+        
+  
+ 
+<span class="n">n_time_interval</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">ntweets</span> <span class="o">=</span> <span class="mi">0</span>
+
+  
+<span class="c1">#get newest tweet and its time in the first time window        </span>
+<span class="n">agencies_info</span> <span class="o">=</span> <span class="n">collectionNA</span><span class="o">.</span><span class="n">find</span><span class="p">()</span><span class="o">.</span><span class="n">sort</span><span class="p">([(</span><span class="s2">"max_timestamp"</span><span class="p">,</span> <span class="n">pymongo</span><span class="o">.</span><span class="n">DESCENDING</span><span class="p">)])</span>
+<span class="n">newest_timestamp</span> <span class="o">=</span> <span class="n">agencies_info</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'max_timestamp'</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">oldest_timestamp</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">agencies_info</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'max_timestamp'</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+<span class="c1">#print 'newest_timestamp:', newest_timestamp, 'oldest_time_step', oldest_timestamp</span>
+
+<span class="c1"># get all tweet in the total time window </span>
+<span class="n">tweets_in_total_window</span> <span class="o">=</span> <span class="n">collectionNT</span><span class="o">.</span><span class="n">find</span><span class="p">({</span><span class="s1">'time_in_secs'</span><span class="p">:{</span><span class="s2">"$gt"</span><span class="p">:</span> <span class="p">(</span><span class="n">newest_timestamp</span> <span class="o">-</span> <span class="n">total_time_window_mins</span><span class="o">*</span><span class="mi">60</span><span class="p">)}})</span><span class="o">.</span><span class="n">sort</span><span class="p">([(</span><span class="s2">"time_in_secs"</span><span class="p">,</span> <span class="n">pymongo</span><span class="o">.</span><span class="n">DESCENDING</span><span class="p">)])</span>
+<span class="nb">print</span> <span class="p">(</span><span class="s1">'number of tweets in window:'</span><span class="p">,</span> <span class="n">tweets_in_total_window</span><span class="o">.</span><span class="n">count</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area"><div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>('number of tweets in window:', 1077)
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [17]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">stop</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">stopwords</span><span class="o">.</span><span class="n">words</span><span class="p">(</span><span class="s1">'english'</span><span class="p">))</span>  <span class="c1"># predefined list of "uninteresting" words</span>
+<span class="n">extended_stop</span><span class="o">=</span><span class="nb">set</span><span class="p">(</span><span class="n">setting</span><span class="o">.</span><span class="n">EXTENDED_STOP_LIST</span><span class="p">)</span> <span class="c1"># list of some frequenctly used words like twitter abbreviations</span>
+<span class="n">counter</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">()</span>
+
+<span class="k">def</span> <span class="nf">read_tweet_from_db_cursor</span><span class="p">(</span><span class="n">tweet</span><span class="p">):</span>
+  <span class="k">return</span> <span class="p">[</span><span class="n">tweet</span><span class="p">[</span><span class="s1">'time_in_secs'</span><span class="p">],</span><span class="n">tweet</span><span class="p">[</span><span class="s1">'created_at'</span><span class="p">],</span><span class="n">tweet</span><span class="p">[</span><span class="s1">'id'</span><span class="p">],</span><span class="n">tweet</span><span class="p">[</span><span class="s1">'text'</span><span class="p">],</span><span class="n">tweet</span><span class="p">[</span><span class="s1">'hashtags'</span><span class="p">],</span><span class="n">tweet</span><span class="p">[</span><span class="s1">'users'</span><span class="p">],</span><span class="n">tweet</span><span class="p">[</span><span class="s1">'urls'</span><span class="p">],</span><span class="n">tweet</span><span class="p">[</span><span class="s1">'source'</span><span class="p">]]</span>
+
+<span class="k">def</span> <span class="nf">nlargest</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">word_scores</span><span class="p">):</span>
+    <span class="sd">""" uses heapq to return the n words with the largest count."""</span>
+    <span class="c1"># word_scores: index 0=>word, 1=>count</span>
+    <span class="k">return</span> <span class="n">heapq</span><span class="o">.</span><span class="n">nlargest</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">word_scores</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+<span class="n">tweets_in_total_window</span> <span class="o">=</span> <span class="n">collectionNT</span><span class="o">.</span><span class="n">find</span><span class="p">({</span><span class="s1">'time_in_secs'</span><span class="p">:{</span><span class="s2">"$gt"</span><span class="p">:</span> <span class="p">(</span><span class="n">newest_timestamp</span> <span class="o">-</span> <span class="n">total_time_window_mins</span><span class="o">*</span><span class="mi">60</span><span class="p">)}})</span><span class="o">.</span><span class="n">sort</span><span class="p">([(</span><span class="s2">"time_in_secs"</span><span class="p">,</span> <span class="n">pymongo</span><span class="o">.</span><span class="n">DESCENDING</span><span class="p">)])</span>
+<span class="nb">print</span> <span class="n">counter</span><span class="p">[</span><span class="s1">'new'</span><span class="p">]</span>    
+
+<span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">tweet</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tweets_in_total_window</span><span class="p">):</span>
+    <span class="n">text</span><span class="o">=</span><span class="n">tweet</span><span class="p">[</span><span class="s1">'text'</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">text</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">():</span>  <span class="c1"># lowercase, split by whitespace</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">word</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">stop</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">word</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">extended_stop</span><span class="p">):</span>  <span class="c1"># avoid uninteresting words</span>
+            <span class="n">counter</span><span class="p">[</span><span class="n">word</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+ 
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">nlargest</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">counter</span><span class="o">.</span><span class="n">items</span><span class="p">()),</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">'words'</span><span class="p">,</span> <span class="s1">'count'</span><span class="p">])</span>
+<span class="n">df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">'words'</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s1">'bar'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area"><div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>0
+</pre>
+</div>
+</div>
+<div class="output_area"><div class="prompt output_prompt">Out[17]:</div>
+<div class="output_text output_subarea output_execute_result">
+<pre><matplotlib.axes._subplots.axessubplot at 0xd1a6438></pre>
+</div>
+</div>
+<div class="output_area"><div class="prompt"></div>
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,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
+">
+</img></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [19]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">counter</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">()</span>
+<span class="n">tweets_in_total_window</span> <span class="o">=</span> <span class="n">collectionNT</span><span class="o">.</span><span class="n">find</span><span class="p">({</span><span class="s1">'time_in_secs'</span><span class="p">:{</span><span class="s2">"$gt"</span><span class="p">:</span> <span class="p">(</span><span class="n">newest_timestamp</span> <span class="o">-</span> <span class="n">total_time_window_mins</span><span class="o">*</span><span class="mi">60</span><span class="p">)}})</span><span class="o">.</span><span class="n">sort</span><span class="p">([(</span><span class="s2">"time_in_secs"</span><span class="p">,</span> <span class="n">pymongo</span><span class="o">.</span><span class="n">DESCENDING</span><span class="p">)])</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">tweet</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tweets_in_total_window</span><span class="p">):</span>
+        <span class="n">text</span><span class="o">=</span><span class="n">tweet</span><span class="p">[</span><span class="s1">'text'</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">text</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">word</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">stop</span> <span class="ow">and</span> <span class="n">word</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">extended_stop</span><span class="p">:</span>
+                <span class="n">counter</span><span class="p">[</span><span class="n">word</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+        
+    <span class="n">wordcloud</span> <span class="o">=</span> <span class="n">WordCloud</span><span class="p">()</span><span class="o">.</span><span class="n">fit_words</span><span class="p">(</span><span class="n">counter</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">"off"</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">wordcloud</span><span class="p">)</span>       
+<span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span> 
+    <span class="k">pass</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area"><div class="prompt"></div>
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,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
+F2CGW14DnWdfgl5VjlRQhO3E6e2OQ1KQFyz8iopTx7drt22b/r8vpebyoR6hGQAAAghJREFU6Zia
+llQb9TKi4EKRBpHQNmHSe+1fucTPY43Jrq9c4kdLmDx7QS3xhsz3z6w38ph/eucLlhanQCK8d+5D
+z10TELwWAtd/gWCT8C87maqjFiM4ZJTxubhmjwUBQo+tJ/Hv9LOuQ2a7iDcYIEDltyq1mzRGT7ej
+2AViQQO7V0R2CHzzbIRo7Z6ZobfGPt2NGTMR8yTUVckJhvVEF0adDrqJYBdJfBpBXRPHPt1N9PWW
++9l90wUIHgeCRSHy4jt4fvcLak7/ddKEeeGD1Ez/9R7vf09obRn0v0De2W9Q8+rpjVsCeWcvpObV
+FvPx3bHe6ZNCP0uWHxrpNEiCCGPPsqM4BTa8HiNWt+cFfjNNL3FS46fZ5pjZZl+WHxRZoZ8lS5Ys
++xC7I/T7fGjlLFmyZMnSe+zVmX6WLFmyZPl+yc70s2TJkmUfIiv0s2TJkmUfIiv0s2TJkmUfIiv0
+s2TJkmUfIiv0s2TJkmUfIiv0s2TJkmUfIiv0s2TJkmUfIiv0s2TJkmUfIiv0s2TJkmUfIiv0s2TJ
+kmUfIiv0s2TJkmUfIiv0s2TJkmUfIiv0s2TJkmUfIiv0s2TJkmUfIiv0s2TJkmUfIiv0s2TJkmUf
+Iiv0s2TJkmUfIiv0s2TJkmUfIiv0s2TJkmUfIiv0s2TJkmUfIiv0s2TJkmUfIiv0s2TJkmUf4v8B
+zHboHKRts5IAAAAASUVORK5CYII=
+">
+</img></div>
+</div>
+</div>
+</div>
+</div>
+<script type="text/javascript">if (!document.getElementById('mathjaxscript_pelican_#%@#$@#')) {
+    var mathjaxscript = document.createElement('script');
+    mathjaxscript.id = 'mathjaxscript_pelican_#%@#$@#';
+    mathjaxscript.type = 'text/javascript';
+    mathjaxscript.src = '//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML';
+    mathjaxscript[(window.opera ? "innerHTML" : "text")] =
+        "MathJax.Hub.Config({" +
+        "    config: ['MMLorHTML.js']," +
+        "    TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } }," +
+        "    jax: ['input/TeX','input/MathML','output/HTML-CSS']," +
+        "    extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']," +
+        "    displayAlign: 'center'," +
+        "    displayIndent: '0em'," +
+        "    showMathMenu: true," +
+        "    tex2jax: { " +
+        "        inlineMath: [ ['$','$'] ], " +
+        "        displayMath: [ ['$$','$$'] ]," +
+        "        processEscapes: true," +
+        "        preview: 'TeX'," +
+        "    }, " +
+        "    'HTML-CSS': { " +
+        " linebreaks: { automatic: true, width: '95% container' }, " +
+        "        styles: { '.MathJax_Display, .MathJax .mo, .MathJax .mi, .MathJax .mn': {color: 'black ! important'} }" +
+        "    } " +
+        "}); ";
+    (document.body || document.getElementsByTagName('head')[0]).appendChild(mathjaxscript);
+}
+</script>
+                </article>
+            </aside><!-- /#featured -->
+        <section id="extras" class="body">
+                <div class="blogroll">
+                        <h2>blogroll</h2>
+                        <ul>
+                            <li><a href="http://getpelican.com/">Pelican</a></li>
+                            <li><a href="http://python.org/">Python.org</a></li>
+                            <li><a href="http://jinja.pocoo.org/">Jinja2</a></li>
+                            <li><a href="#">You can modify those links in your config file</a></li>
+                        </ul>
+                </div><!-- /.blogroll -->
+                <div class="social">
+                        <h2>social</h2>
+                        <ul>
+                            <li><a href="https://alimahmoudzadeh.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate">atom feed</a></li>
+
+                            <li><a href="#">You can add links in your config file</a></li>
+                            <li><a href="#">Another social link</a></li>
+                        </ul>
+                </div><!-- /.social -->
+        </section><!-- /#extras -->
+
+        <footer id="contentinfo" class="body">
+                <address id="about" class="vcard body">
+                Proudly powered by <a href="http://getpelican.com/">Pelican</a>, which takes great advantage of <a href="http://python.org">Python</a>.
+                </address><!-- /#about -->
+
+                <p>The theme is by <a href="http://coding.smashingmagazine.com/2009/08/04/designing-a-html-5-layout-from-scratch/">Smashing Magazine</a>, thanks!</p>
+        </footer><!-- /#contentinfo -->
+
+</body>
+</html>
