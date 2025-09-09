@@ -1,0 +1,1881 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Visualization</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            height: 100vh;
+            display: flex;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            display: flex;
+            width: 100%;
+            height: 100%;
+        }
+
+        .left-panel {
+            width: 200px;
+            background-color: white;
+            border-right: 1px solid #ddd;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .center-panel {
+            flex: 1;
+            background-color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .center-panel.drill-down {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .drill-down-text {
+            height: 50%;
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #ddd;
+            padding: 15px;
+            overflow-y: auto;
+            font-size: 12px;
+        }
+
+        .drill-down-chart {
+            height: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .cluster-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .cluster-item {
+            padding: 10px;
+            margin-bottom: 8px;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .cluster-item:hover {
+            background-color: #e3f2fd;
+        }
+
+        .cluster-item.active {
+            background-color: #2563eb;
+            color: white;
+        }
+
+        .cluster-name {
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+
+        .cluster-stats {
+            font-size: 11px;
+            color: #666;
+        }
+
+        .cluster-item.active .cluster-stats {
+            color: #e3f2fd;
+        }
+
+        .sample-item {
+            padding: 8px 12px;
+            margin-bottom: 6px;
+            background-color: #f8f9fa;
+            border: 1px solid #e3e6ea;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 11px;
+        }
+
+        .sample-item:hover {
+            background-color: #e9ecef;
+            border-color: #ced4da;
+        }
+
+        .sample-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .sample-toggle {
+            font-size: 10px;
+            color: #6c757d;
+        }
+
+        .sample-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            margin-top: 6px;
+        }
+
+        .sample-content.expanded {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .sample-field {
+            margin-bottom: 4px;
+            font-size: 10px;
+        }
+
+        .sample-field strong {
+            color: #343a40;
+            margin-right: 6px;
+        }
+
+        .sample-field span {
+            color: #6c757d;
+        }
+
+        .right-panel {
+            width: 350px;
+            background-color: white;
+            border-left: 1px solid #ddd;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .control-section {
+            margin-bottom: 25px;
+        }
+
+        .control-section h3 {
+            margin-bottom: 10px;
+            color: #333;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .file-input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .chart-container {
+            width: 100%;
+            height: 100%;
+        }
+
+        .info-content {
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .info-content h4 {
+            margin-bottom: 10px;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .info-field {
+            margin-bottom: 15px;
+        }
+
+        .info-field strong {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        .info-field div {
+            background-color: #f8f9fa;
+            padding: 8px;
+            border-radius: 4px;
+            word-wrap: break-word;
+        }
+
+        .no-data {
+            text-align: center;
+            color: #666;
+            font-size: 16px;
+            margin-top: 50px;
+        }
+
+        .filter-group {
+            margin-bottom: 15px;
+        }
+
+        .filter-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 12px;
+            color: #555;
+        }
+
+        .metadata-filters {
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #eee;
+            padding: 10px;
+            border-radius: 4px;
+        }
+
+        .metadata-filter {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .metadata-filter input[type="checkbox"] {
+            width: auto;
+            margin-right: 8px;
+            margin-bottom: 0;
+        }
+
+        .metadata-filter label {
+            margin: 0;
+            font-size: 11px;
+            color: #666;
+            flex: 1;
+        }
+
+        .filter-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+            align-items: flex-end;
+        }
+
+        .filter-dropdown {
+            flex: 1;
+        }
+
+        .filter-dropdown label {
+            display: block;
+            font-size: 11px;
+            color: #555;
+            margin-bottom: 3px;
+        }
+
+        .filter-dropdown select {
+            width: 100%;
+            padding: 6px;
+            font-size: 11px;
+            margin-bottom: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Left Panel: Controls -->
+        <div class="left-panel">
+            <div class="control-section">
+                <h3>Load Data</h3>
+                <input type="file" id="fileInput" class="file-input" accept=".json">
+                <button id="loadButton" disabled>Load Data</button>
+            </div>
+
+            <div class="control-section">
+                <h3>Chart Type</h3>
+                <select id="chartType" disabled>
+                    <option value="scatter">Scatter Plot</option>
+                    <option value="scatter_clusters">Scatter with Clusters</option>
+                    <option value="scatter_weight">Scatter by Weight</option>
+                    <option value="scatter_level">Scatter by Level</option>
+                    <option value="side_by_side">Side-by-Side</option>
+                    <option value="drill_down">Drill-Down</option>
+                </select>
+            </div>
+
+            <div class="control-section">
+                <h3>Color By</h3>
+                <select id="colorBy" disabled>
+                    <option value="">Select option...</option>
+                </select>
+            </div>
+
+            <div class="control-section">
+                <h3>Segment By (Drill-Down)</h3>
+                <select id="segmentBy" disabled>
+                    <option value="">Select metadata key...</option>
+                </select>
+            </div>
+
+            <div class="control-section">
+                <h3>Filter By</h3>
+                <div class="filter-row">
+                    <div class="filter-dropdown">
+                        <label for="filterParameter">Parameter:</label>
+                        <select id="filterParameter" disabled>
+                            <option value="">Select parameter...</option>
+                        </select>
+                    </div>
+                    <div class="filter-dropdown">
+                        <label for="filterOperator">Operator:</label>
+                        <select id="filterOperator" disabled>
+                            <option value="equals">Equals</option>
+                            <option value="not_equals">Not Equals</option>
+                            <option value="contains">Contains</option>
+                            <option value="greater_than">Greater Than</option>
+                            <option value="greater_equal">Greater or Equal</option>
+                            <option value="less_than">Less Than</option>
+                            <option value="less_equal">Less or Equal</option>
+                        </select>
+                    </div>
+                    <div class="filter-dropdown">
+                        <label for="filterValue">Value:</label>
+                        <select id="filterValue" disabled>
+                            <option value="">Select value...</option>
+                        </select>
+                    </div>
+                </div>
+                <button id="applyFilters" disabled>Apply Filter</button>
+                <button id="clearFilters" disabled>Clear Filters</button>
+                <button id="resetZoom" disabled style="margin-top: 10px; background-color: #28a745;">Reset Zoom</button>
+            </div>
+        </div>
+
+        <!-- Center Panel: Chart -->
+        <div id="centerPanel" class="center-panel">
+            <div id="chart" class="chart-container">
+                <div class="no-data">Load a JSON file to begin visualization</div>
+            </div>
+            <!-- Drill-down specific content (hidden by default) -->
+            <div id="drillDownText" class="drill-down-text" style="display: none;">
+                <ul id="clusterList" class="cluster-list">
+                </ul>
+            </div>
+            <div id="drillDownChart" class="drill-down-chart" style="display: none;">
+                <div id="barChart" class="chart-container">
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Panel: Information -->
+        <div class="right-panel">
+            <div class="info-content">
+                <h4>Entry Details</h4>
+                <div id="entryInfo">
+                    <div class="no-data">Hover over a point to see details</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let data = null;
+        let currentData = null;
+        let metadataKeys = [];
+        let zoomState = 'overview'; // 'overview', 'cluster', 'subcluster'
+        let currentCluster = null;
+        let currentSubcluster = null;
+        let drillDownState = 'clusters'; // 'clusters', 'subclusters', 'samples'
+        let selectedCluster = null;
+        let selectedSubcluster = null;
+
+        // DOM elements
+        const fileInput = document.getElementById('fileInput');
+        const loadButton = document.getElementById('loadButton');
+        const chartType = document.getElementById('chartType');
+        const colorBy = document.getElementById('colorBy');
+        const segmentBy = document.getElementById('segmentBy');
+        const filterParameter = document.getElementById('filterParameter');
+        const filterOperator = document.getElementById('filterOperator');
+        const filterValue = document.getElementById('filterValue');
+        const applyFilters = document.getElementById('applyFilters');
+        const clearFilters = document.getElementById('clearFilters');
+        const resetZoom = document.getElementById('resetZoom');
+        const entryInfo = document.getElementById('entryInfo');
+        const centerPanel = document.getElementById('centerPanel');
+        const chart = document.getElementById('chart');
+        const drillDownText = document.getElementById('drillDownText');
+        const drillDownChart = document.getElementById('drillDownChart');
+        const clusterList = document.getElementById('clusterList');
+        const barChart = document.getElementById('barChart');
+
+        // File input handling
+        fileInput.addEventListener('change', function(e) {
+            loadButton.disabled = !e.target.files[0];
+        });
+
+        loadButton.addEventListener('click', function() {
+            const file = fileInput.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    data = JSON.parse(e.target.result);
+                    initializeVisualization();
+                } catch (error) {
+                    alert('Error parsing JSON file: ' + error.message);
+                }
+            };
+            reader.readAsText(file);
+        });
+
+        // Auto-load data.json on page load if it exists
+        window.addEventListener('DOMContentLoaded', function() {
+            fetch('data.json')
+                .then(response => {
+                    console.log('Fetch response status:', response.status);
+                    if (response.ok) {
+                        return response.json();
+                    }
+                    return null;
+                })
+                .then(jsonData => {
+                    if (jsonData) {
+                        console.log('Auto-loaded data.json successfully');
+                        data = jsonData;
+                        initializeVisualization();
+                    } else {
+                        console.log('data.json not found or empty');
+                    }
+                })
+                .catch(error => {
+                    console.log('Could not load data.json:', error.message);
+                });
+        });
+
+        function initializeVisualization() {
+            if (!data || !data.entries) {
+                alert('Invalid data format. Missing entries.');
+                return;
+            }
+
+            currentData = [...data.entries];
+            
+            // Enable controls
+            chartType.disabled = false;
+            colorBy.disabled = false;
+            segmentBy.disabled = (chartType.value !== 'drill_down'); // Only enable for drill-down
+            filterParameter.disabled = false;
+            filterOperator.disabled = false;
+            applyFilters.disabled = false;
+            clearFilters.disabled = false;
+            resetZoom.disabled = false;
+
+            // Populate color by options
+            populateColorByOptions();
+            
+            // Populate segmentation options
+            populateSegmentByOptions();
+            
+            // Populate filter options
+            populateFilterParameters();
+            
+            // Initialize zoom state
+            zoomState = 'overview';
+            currentCluster = null;
+            currentSubcluster = null;
+            
+            // Create initial chart
+            createChart();
+        }
+
+        function populateColorByOptions() {
+            colorBy.innerHTML = '<option value="">None</option>';
+            
+            // Add cluster/subcluster options
+            if (data.clusters) {
+                colorBy.innerHTML += '<option value="cluster">Cluster</option>';
+            }
+            if (data.subclusters) {
+                colorBy.innerHTML += '<option value="subcluster" selected>Subcluster</option>';
+            }
+            
+            // Add metadata options
+            if (data.entries.length > 0 && data.entries[0].metadata) {
+                metadataKeys = Object.keys(data.entries[0].metadata);
+                metadataKeys.forEach(key => {
+                    colorBy.innerHTML += `<option value="metadata.${key}">Metadata: ${key}</option>`;
+                });
+            }
+        }
+
+        function populateSegmentByOptions() {
+            segmentBy.innerHTML = '<option value="">Select metadata key...</option>';
+            
+            // Add metadata options for segmentation
+            if (data.entries.length > 0 && data.entries[0].metadata) {
+                metadataKeys = Object.keys(data.entries[0].metadata);
+                metadataKeys.forEach(key => {
+                    segmentBy.innerHTML += `<option value="${key}">${key}</option>`;
+                });
+            }
+        }
+
+        function populateFilterParameters() {
+            filterParameter.innerHTML = '<option value="">Select parameter...</option>';
+            
+            // Add cluster/subcluster options
+            if (data.clusters) {
+                filterParameter.innerHTML += '<option value="cluster">Cluster</option>';
+            }
+            if (data.subclusters) {
+                filterParameter.innerHTML += '<option value="subcluster">Subcluster</option>';
+            }
+            
+            // Add metadata options
+            if (data.entries.length > 0 && data.entries[0].metadata) {
+                metadataKeys = Object.keys(data.entries[0].metadata);
+                metadataKeys.forEach(key => {
+                    filterParameter.innerHTML += `<option value="metadata.${key}">Metadata: ${key}</option>`;
+                });
+            }
+        }
+
+        function populateFilterValues(parameter) {
+            filterValue.innerHTML = '<option value="">Select value...</option>';
+            filterValue.disabled = !parameter;
+            
+            if (!parameter) return;
+
+            let values = [];
+            
+            if (parameter === 'cluster' && data.clusters) {
+                values = Object.keys(data.clusters);
+            } else if (parameter === 'subcluster' && data.subclusters) {
+                values = Object.keys(data.subclusters);
+            } else if (parameter.startsWith('metadata.')) {
+                const key = parameter.replace('metadata.', '');
+                values = [...new Set(data.entries
+                    .map(entry => entry.metadata && entry.metadata[key])
+                    .filter(val => val !== undefined && val !== null && val !== '')
+                )];
+            }
+
+            values.forEach(value => {
+                const option = document.createElement('option');
+                option.value = value;
+                option.textContent = value;
+                filterValue.appendChild(option);
+            });
+        }
+
+        function getEntryCluster(entry) {
+            if (!data.clusters) return null;
+            
+            for (const [clusterName, clusterData] of Object.entries(data.clusters)) {
+                if (clusterData.subcluster_labels && clusterData.subcluster_labels.includes(entry.subcluster_label)) {
+                    return clusterName;
+                }
+            }
+            return null;
+        }
+
+        function createChart() {
+            if (!currentData || currentData.length === 0) return;
+
+            const traces = [];
+            const colorByValue = colorBy.value;
+            const chartTypeValue = chartType.value;
+
+            // Handle scatter_level chart type - shows clusters/subclusters as points
+            if (chartTypeValue === 'scatter_level') {
+                // Define color palette for clusters/subclusters
+                const colors = [
+                    '#2563eb', '#dc2626', '#059669', '#7c3aed', '#ea580c', 
+                    '#0891b2', '#be185d', '#65a30d', '#c2410c', '#0369a1',
+                    '#7c2d12', '#581c87', '#166534', '#b91c1c', '#1565c0'
+                ];
+
+                if (zoomState === 'overview' && data.clusters) {
+                    // Show clusters as data points
+                    Object.entries(data.clusters).forEach(([clusterName, clusterData], index) => {
+                        if (clusterData.coordinates) {
+                            const size = Math.max(20, Math.min(50, 20 + ((clusterData.weight || 0) / Math.max(...Object.values(data.clusters).map(c => c.weight || 0)) || 1) * 30));
+                            const color = colors[index % colors.length];
+                            
+                            // Add main cluster trace (circle with count text in center)
+                            const trace = {
+                                x: [clusterData.coordinates[0]],
+                                y: [clusterData.coordinates[1]],
+                                mode: 'markers+text',
+                                type: 'scatter',
+                                name: clusterName.replace(/_/g, ' '),
+                                marker: {
+                                    size: size,
+                                    opacity: 0.7,
+                                    color: color
+                                },
+                                text: [clusterData.weight || 0],
+                                textfont: {
+                                    size: 16,
+                                    color: 'white',
+                                    family: 'Arial Black, sans-serif'
+                                },
+                                textposition: 'middle center',
+                                customdata: [{type: 'cluster', name: clusterName, data: clusterData}],
+                                hovertemplate: `${clusterName.replace(/_/g, ' ')} (${clusterData.weight || 0} entries)<br>Click to zoom in<extra></extra>`
+                            };
+                            traces.push(trace);
+
+                        }
+                    });
+                } else if (zoomState === 'cluster' && currentCluster && data.subclusters) {
+                    // Show subclusters as data points
+                    const clusterData = data.clusters[currentCluster];
+                    if (clusterData && clusterData.subcluster_labels) {
+                        clusterData.subcluster_labels.forEach((subclusterLabel, index) => {
+                            const subclusterData = data.subclusters[subclusterLabel];
+                            if (subclusterData && subclusterData.coordinates) {
+                                const size = Math.max(20, Math.min(50, 20 + ((subclusterData.count || 0) / Math.max(...clusterData.subcluster_labels.map(label => data.subclusters[label]?.count || 0)) || 1) * 30));
+                                const color = colors[index % colors.length];
+                                
+                                // Add main subcluster trace (circle with count text in center)
+                                const trace = {
+                                    x: [subclusterData.coordinates[0]],
+                                    y: [subclusterData.coordinates[1]],
+                                    mode: 'markers+text',
+                                    type: 'scatter',
+                                    name: subclusterLabel.replace(/_/g, ' '),
+                                    marker: {
+                                        size: size,
+                                        opacity: 0.7,
+                                        color: color
+                                    },
+                                    text: [subclusterData.count || 0],
+                                    textfont: {
+                                        size: 14,
+                                        color: 'white',
+                                        family: 'Arial Black, sans-serif'
+                                    },
+                                    textposition: 'middle center',
+                                    customdata: [{type: 'subcluster', name: subclusterLabel, data: subclusterData}],
+                                    hovertemplate: `${subclusterLabel.replace(/_/g, ' ')} (${subclusterData.count || 0} entries)<br>Click to zoom in<extra></extra>`
+                                };
+                                traces.push(trace);
+
+                            }
+                        });
+                    }
+                } else if (zoomState === 'subcluster') {
+                    // Show individual data points for the subcluster
+                    const trace = {
+                        x: currentData.map(entry => entry.coordinates[0]),
+                        y: currentData.map(entry => entry.coordinates[1]),
+                        mode: 'markers',
+                        type: 'scatter',
+                        marker: {
+                            size: 8,
+                            color: '#f59e0b',
+                            opacity: 0.7
+                        },
+                        text: currentData.map(entry => `ID: ${entry.id}`),
+                        customdata: currentData,
+                        hovertemplate: '%{text}<extra></extra>'
+                    };
+                    traces.push(trace);
+                }
+            } else if (chartTypeValue === 'side_by_side') {
+                // Create side-by-side bubble chart with agent_id vs subcluster_label
+                
+                // Get all unique agent_ids and subcluster_labels
+                const agentIds = [...new Set(currentData
+                    .map(entry => entry.metadata?.agent_id)
+                    .filter(id => id !== undefined && id !== null)
+                )].sort();
+                
+                const subclusterLabels = [...new Set(currentData
+                    .map(entry => entry.subcluster_label)
+                    .filter(label => label !== undefined && label !== null)
+                )].sort();
+
+                // Create matrix of counts
+                const matrix = {};
+                agentIds.forEach(agentId => {
+                    matrix[agentId] = {};
+                    subclusterLabels.forEach(label => {
+                        matrix[agentId][label] = 0;
+                    });
+                });
+
+                // Fill matrix with actual counts
+                currentData.forEach(entry => {
+                    const agentId = entry.metadata?.agent_id;
+                    const subclusterLabel = entry.subcluster_label;
+                    if (agentId && subclusterLabel) {
+                        matrix[agentId][subclusterLabel]++;
+                    }
+                });
+
+                // Find max count for normalization
+                let maxCount = 0;
+                agentIds.forEach(agentId => {
+                    subclusterLabels.forEach(subclusterLabel => {
+                        maxCount = Math.max(maxCount, matrix[agentId][subclusterLabel]);
+                    });
+                });
+
+                // Define color palette for subclusters
+                const colors = [
+                    '#2563eb', '#dc2626', '#059669', '#7c3aed', '#ea580c', 
+                    '#0891b2', '#be185d', '#65a30d', '#c2410c', '#0369a1',
+                    '#7c2d12', '#581c87', '#166534', '#b91c1c', '#1565c0'
+                ];
+
+                // Create separate trace for each subcluster to enable coloring
+                subclusterLabels.forEach((subclusterLabel, subclusterIndex) => {
+                    const color = colors[subclusterIndex % colors.length];
+                    
+                    const bubbleTrace = {
+                        x: [],
+                        y: [],
+                        mode: 'markers',
+                        type: 'scatter',
+                        name: subclusterLabel.replace(/_/g, ' '),
+                        marker: {
+                            size: [],
+                            color: color,
+                            opacity: 0.7,
+                            sizemode: 'diameter',
+                            sizeref: 0.1
+                        },
+                        text: [],
+                        hovertemplate: '%{text}<extra></extra>'
+                    };
+
+                    agentIds.forEach((agentId, xIndex) => {
+                        const count = matrix[agentId][subclusterLabel];
+                        if (count > 0) {
+                            bubbleTrace.x.push(xIndex + 1);  // Start from 1 instead of 0
+                            bubbleTrace.y.push(subclusterIndex + 1);  // Start from 1 instead of 0
+                            // Normalize count to range 1-10
+                            const normalizedSize = 1 + ((count / maxCount) * 9);
+                            bubbleTrace.marker.size.push(normalizedSize);
+                            bubbleTrace.text.push(`Agent: ${agentId}<br>Subcluster: ${subclusterLabel.replace(/_/g, ' ')}<br>Count: ${count}`);
+                        }
+                    });
+
+                    if (bubbleTrace.x.length > 0) {
+                        traces.push(bubbleTrace);
+                    }
+                });
+
+            } else if (colorByValue === '' || colorByValue === 'None') {
+                // Single trace, no coloring
+                let markerSizes = [];
+                
+                // Calculate sizes based on chart type
+                if (chartTypeValue === 'scatter_weight') {
+                    // Calculate sizes inversely proportional to score
+                    markerSizes = currentData.map(entry => {
+                        const score = entry.metadata && entry.metadata.score ? parseFloat(entry.metadata.score) : 1;
+                        const maxScore = Math.max(...currentData
+                            .map(e => e.metadata && e.metadata.score ? parseFloat(e.metadata.score) : 1));
+                        const minScore = Math.min(...currentData
+                            .map(e => e.metadata && e.metadata.score ? parseFloat(e.metadata.score) : 1));
+                        
+                        // Inverse mapping: lower score = larger size
+                        const normalizedScore = (score - minScore) / (maxScore - minScore) || 0;
+                        const inverseScore = 1 - normalizedScore;
+                        return 15 + (inverseScore * 10); // Size range 15-25
+                    });
+                } else {
+                    markerSizes = 8; // Default size
+                }
+
+                const trace = {
+                    x: currentData.map(entry => entry.coordinates[0]),
+                    y: currentData.map(entry => entry.coordinates[1]),
+                    mode: 'markers',
+                    type: 'scatter',
+                    marker: {
+                        size: markerSizes,
+                        color: '#1f77b4',
+                        opacity: 0.7
+                    },
+                    text: currentData.map((entry, idx) => `ID: ${entry.id}`),
+                    customdata: currentData,
+                    hovertemplate: '%{text}<extra></extra>'
+                };
+                traces.push(trace);
+            } else {
+                // Group by color value
+                const groups = {};
+                
+                currentData.forEach(entry => {
+                    let value;
+                    
+                    if (colorByValue === 'cluster') {
+                        value = getEntryCluster(entry) || 'Unknown';
+                    } else if (colorByValue === 'subcluster') {
+                        value = entry.subcluster_label || 'Unknown';
+                    } else if (colorByValue.startsWith('metadata.')) {
+                        const key = colorByValue.replace('metadata.', '');
+                        value = (entry.metadata && entry.metadata[key]) || 'Unknown';
+                    } else {
+                        value = 'Unknown';
+                    }
+                    
+                    if (!groups[value]) {
+                        groups[value] = [];
+                    }
+                    groups[value].push(entry);
+                });
+
+                // Create traces for each group
+                Object.entries(groups).forEach(([groupName, entries]) => {
+                    let markerSizes = [];
+                    
+                    // Calculate sizes based on chart type
+                    if (chartTypeValue === 'scatter_weight') {
+                        // Calculate sizes inversely proportional to score
+                        markerSizes = entries.map(entry => {
+                            const score = entry.metadata && entry.metadata.score ? parseFloat(entry.metadata.score) : 1;
+                            const maxScore = Math.max(...currentData
+                                .map(e => e.metadata && e.metadata.score ? parseFloat(e.metadata.score) : 1));
+                            const minScore = Math.min(...currentData
+                                .map(e => e.metadata && e.metadata.score ? parseFloat(e.metadata.score) : 1));
+                            
+                            // Inverse mapping: lower score = larger size
+                            const normalizedScore = (score - minScore) / (maxScore - minScore) || 0;
+                            const inverseScore = 1 - normalizedScore;
+                            return 15 + (inverseScore * 10); // Size range 15-25
+                        });
+                    } else {
+                        markerSizes = 8; // Default size
+                    }
+
+                    const trace = {
+                        x: entries.map(entry => entry.coordinates[0]),
+                        y: entries.map(entry => entry.coordinates[1]),
+                        mode: 'markers',
+                        type: 'scatter',
+                        name: groupName,
+                        marker: {
+                            size: markerSizes,
+                            opacity: 0.7
+                        },
+                        text: entries.map(entry => `ID: ${entry.id}`),
+                        customdata: entries,
+                        hovertemplate: '%{text}<extra></extra>'
+                    };
+                    traces.push(trace);
+                });
+            }
+
+            const layout = {
+                title: 'Data Visualization',
+                xaxis: { 
+                    title: chartTypeValue === 'side_by_side' ? 'Agent ID' : '',
+                    showgrid: chartTypeValue === 'side_by_side',
+                    showline: true,
+                    linewidth: 2,
+                    linecolor: '#ddd',
+                    mirror: true,
+                    zeroline: false,
+                    showticklabels: chartTypeValue === 'side_by_side'
+                },
+                yaxis: { 
+                    title: chartTypeValue === 'side_by_side' ? 'Subcluster' : '',
+                    showgrid: chartTypeValue === 'side_by_side',
+                    showline: true,
+                    linewidth: 2,
+                    linecolor: '#ddd',
+                    mirror: true,
+                    zeroline: false,
+                    showticklabels: chartTypeValue === 'side_by_side',
+                    tickangle: chartTypeValue === 'side_by_side' ? -45 : 0,
+                    automargin: true
+                },
+                hovermode: 'closest',
+                showlegend: colorByValue !== '' && colorByValue !== 'None' || chartTypeValue === 'scatter_level' || chartTypeValue === 'side_by_side',
+                legend: {
+                    orientation: 'h',
+                    x: 0.5,
+                    xanchor: 'center',
+                    y: -0.2
+                }
+            };
+
+            // Configure categorical axes for side-by-side chart
+            if (chartTypeValue === 'side_by_side') {
+                const agentIds = [...new Set(currentData
+                    .map(entry => entry.metadata?.agent_id)
+                    .filter(id => id !== undefined && id !== null)
+                )].sort();
+                
+                const subclusterLabels = [...new Set(currentData
+                    .map(entry => entry.subcluster_label)
+                    .filter(label => label !== undefined && label !== null)
+                )].sort();
+
+                layout.xaxis.tickmode = 'array';
+                layout.xaxis.tickvals = agentIds.map((_, i) => i + 1);  // Start from 1
+                layout.xaxis.ticktext = agentIds;
+
+                layout.yaxis.tickmode = 'array';
+                layout.yaxis.tickvals = subclusterLabels.map((_, i) => i + 1);  // Start from 1
+                layout.yaxis.ticktext = subclusterLabels.map(label => label.replace(/_/g, ' '));
+            }
+
+            // Add cluster boundaries if scatter_clusters is selected
+            if (chartTypeValue === 'scatter_clusters' && data.clusters) {
+                Object.entries(data.clusters).forEach(([clusterName, clusterData]) => {
+                    if (clusterData.coordinates && clusterData.subcluster_labels) {
+                        // Get all points in this cluster
+                        const clusterPoints = currentData.filter(entry => 
+                            clusterData.subcluster_labels.includes(entry.subcluster_label)
+                        );
+                        
+                        if (clusterPoints.length > 2) {
+                            // Calculate convex hull for cluster boundary
+                            const hull = calculateConvexHull(clusterPoints.map(p => p.coordinates));
+                            
+                            if (hull.length > 2) {
+                                // Close the hull by adding first point at the end
+                                hull.push(hull[0]);
+                                
+                                const boundaryTrace = {
+                                    x: hull.map(p => p[0]),
+                                    y: hull.map(p => p[1]),
+                                    mode: 'lines',
+                                    type: 'scatter',
+                                    name: `${clusterName} boundary`,
+                                    line: {
+                                        color: 'rgba(128,128,128,0.5)',
+                                        width: 2,
+                                        dash: 'dash'
+                                    },
+                                    showlegend: false,
+                                    hoverinfo: 'skip'
+                                };
+                                traces.push(boundaryTrace);
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Add text labels based on zoom state (but not for side-by-side chart)
+            if (chartTypeValue !== 'side_by_side' && zoomState === 'overview' && data.clusters) {
+                // Add cluster labels
+                Object.entries(data.clusters).forEach(([clusterName, clusterData]) => {
+                    if (clusterData.coordinates) {
+                        // Add invisible hover area (covers whole text)
+                        const textLength = clusterName.replace(/_/g, ' ').length;
+                        const hoverAreaTrace = {
+                            x: [clusterData.coordinates[0]],
+                            y: [clusterData.coordinates[1]],
+                            mode: 'markers',
+                            type: 'scatter',
+                            marker: {
+                                size: Math.max(80, textLength * 8),
+                                color: 'rgba(0,0,0,0)',
+                                line: { color: 'rgba(0,0,0,0)', width: 0 }
+                            },
+                            showlegend: false,
+                            hoverinfo: 'none',
+                            customdata: [{type: 'cluster', name: clusterName, data: clusterData}]
+                        };
+                        traces.push(hoverAreaTrace);
+
+                        // Add shadow for cluster text (except for scatter_level)
+                        if (chartTypeValue !== 'scatter_level') {
+                            const shadowTrace = {
+                                x: [clusterData.coordinates[0] + 0.05],
+                                y: [clusterData.coordinates[1] - 0.05],
+                                mode: 'text',
+                                type: 'scatter',
+                                text: [clusterName.replace(/_/g, ' ')],
+                                textfont: {
+                                    size: 26,
+                                    color: 'rgba(0,0,0,0.7)',
+                                    family: 'Inter Black, system-ui, -apple-system, sans-serif'
+                                },
+                                textposition: 'middle center',
+                                showlegend: false,
+                                hoverinfo: 'skip'
+                            };
+                            traces.push(shadowTrace);
+                        }
+
+                        // Add main text
+                        const textTrace = {
+                            x: [clusterData.coordinates[0]],
+                            y: [clusterData.coordinates[1]],
+                            mode: 'text',
+                            type: 'scatter',
+                            text: [clusterName.replace(/_/g, ' ')],
+                            textfont: {
+                                size: 26,
+                                color: '#2563eb',
+                                family: 'Inter Black, system-ui, -apple-system, sans-serif'
+                            },
+                            textposition: 'middle center',
+                            showlegend: false,
+                            hoverinfo: 'skip'
+                        };
+                        traces.push(textTrace);
+                    }
+                });
+            } else if (chartTypeValue !== 'side_by_side' && zoomState === 'cluster' && currentCluster && data.subclusters) {
+                // Add subcluster labels for current cluster
+                const clusterData = data.clusters[currentCluster];
+                if (clusterData && clusterData.subcluster_labels) {
+                    clusterData.subcluster_labels.forEach(subclusterLabel => {
+                        const subclusterData = data.subclusters[subclusterLabel];
+                        if (subclusterData && subclusterData.coordinates) {
+                            // Add invisible hover area for subcluster (covers whole text)
+                            const textLength = subclusterLabel.replace(/_/g, ' ').length;
+                            const hoverAreaTrace = {
+                                x: [subclusterData.coordinates[0]],
+                                y: [subclusterData.coordinates[1]],
+                                mode: 'markers',
+                                type: 'scatter',
+                                marker: {
+                                    size: Math.max(70, textLength * 7),
+                                    color: 'rgba(0,0,0,0)',
+                                    line: { color: 'rgba(0,0,0,0)', width: 0 }
+                                },
+                                showlegend: false,
+                                hoverinfo: 'none',
+                                customdata: [{type: 'subcluster', name: subclusterLabel, data: subclusterData}]
+                            };
+                            traces.push(hoverAreaTrace);
+
+                            // Add shadow for subcluster text (except for scatter_level)
+                            if (chartTypeValue !== 'scatter_level') {
+                                const shadowTrace = {
+                                    x: [subclusterData.coordinates[0] + 0.05],
+                                    y: [subclusterData.coordinates[1] - 0.05],
+                                    mode: 'text',
+                                    type: 'scatter',
+                                    text: [subclusterLabel.replace(/_/g, ' ')],
+                                    textfont: {
+                                        size: 22,
+                                        color: 'rgba(0,0,0,0.7)',
+                                        family: 'Inter Black, system-ui, -apple-system, sans-serif'
+                                    },
+                                    textposition: 'middle center',
+                                    showlegend: false,
+                                    hoverinfo: 'skip'
+                                };
+                                traces.push(shadowTrace);
+                            }
+
+                            // Add main subcluster text
+                            const textTrace = {
+                                x: [subclusterData.coordinates[0]],
+                                y: [subclusterData.coordinates[1]],
+                                mode: 'text',
+                                type: 'scatter',
+                                text: [subclusterLabel.replace(/_/g, ' ')],
+                                textfont: {
+                                    size: 22,
+                                    color: '#7c3aed',
+                                    family: 'Inter Black, system-ui, -apple-system, sans-serif'
+                                },
+                                textposition: 'middle center',
+                                showlegend: false,
+                                hoverinfo: 'skip'
+                            };
+                            traces.push(textTrace);
+                        }
+                    });
+                }
+            }
+
+            Plotly.newPlot('chart', traces, layout);
+
+            // Add hover event listener
+            document.getElementById('chart').on('plotly_hover', function(eventData) {
+                const point = eventData.points[0];
+                if (point && point.customdata) {
+                    if (point.customdata.type === 'cluster') {
+                        showClusterDetails(point.customdata.name, point.customdata.data);
+                        // Find and update the text traces (hover area → shadow → main)
+                        const shadowTraceIndex = point.curveNumber + 1;
+                        const textTraceIndex = point.curveNumber + 2;
+                        const update = {
+                            'textfont.size': [30]
+                        };
+                        Plotly.restyle('chart', update, [shadowTraceIndex, textTraceIndex]);
+                    } else if (point.customdata.type === 'subcluster') {
+                        showSubclusterDetails(point.customdata.name, point.customdata.data);
+                        // Find and update the text traces (hover area → shadow → main)
+                        const shadowTraceIndex = point.curveNumber + 1;
+                        const textTraceIndex = point.curveNumber + 2;
+                        const update = {
+                            'textfont.size': [26]
+                        };
+                        Plotly.restyle('chart', update, [shadowTraceIndex, textTraceIndex]);
+                    } else if (point.customdata.type === 'cluster_label') {
+                        showClusterDetails(point.customdata.name, point.customdata.data);
+                        // Increase the label text size on hover
+                        const update = {
+                            'textfont.size': [18]
+                        };
+                        Plotly.restyle('chart', update, point.curveNumber);
+                    } else if (point.customdata.type === 'subcluster_label') {
+                        showSubclusterDetails(point.customdata.name, point.customdata.data);
+                        // Increase the label text size on hover
+                        const update = {
+                            'textfont.size': [16]
+                        };
+                        Plotly.restyle('chart', update, point.curveNumber);
+                    } else {
+                        showEntryDetails(point.customdata);
+                    }
+                }
+            });
+
+            // Add unhover event listener to restore text size
+            document.getElementById('chart').on('plotly_unhover', function(eventData) {
+                const point = eventData.points[0];
+                if (point && point.customdata) {
+                    if (point.customdata.type === 'cluster') {
+                        const shadowTraceIndex = point.curveNumber + 1;
+                        const textTraceIndex = point.curveNumber + 2;
+                        const update = {
+                            'textfont.size': [26]
+                        };
+                        Plotly.restyle('chart', update, [shadowTraceIndex, textTraceIndex]);
+                    } else if (point.customdata.type === 'subcluster') {
+                        const shadowTraceIndex = point.curveNumber + 1;
+                        const textTraceIndex = point.curveNumber + 2;
+                        const update = {
+                            'textfont.size': [22]
+                        };
+                        Plotly.restyle('chart', update, [shadowTraceIndex, textTraceIndex]);
+                    } else if (point.customdata.type === 'cluster_label') {
+                        // Restore original label text size
+                        const update = {
+                            'textfont.size': [14]
+                        };
+                        Plotly.restyle('chart', update, point.curveNumber);
+                    } else if (point.customdata.type === 'subcluster_label') {
+                        // Restore original label text size
+                        const update = {
+                            'textfont.size': [12]
+                        };
+                        Plotly.restyle('chart', update, point.curveNumber);
+                    }
+                }
+            });
+
+            // Add click event listener
+            document.getElementById('chart').on('plotly_click', function(eventData) {
+                const point = eventData.points[0];
+                if (point && point.customdata) {
+                    if (point.customdata.type === 'cluster' || point.customdata.type === 'cluster_label') {
+                        zoomToCluster(point.customdata.name);
+                    } else if (point.customdata.type === 'subcluster' || point.customdata.type === 'subcluster_label') {
+                        zoomToSubcluster(point.customdata.name);
+                    }
+                }
+            });
+        }
+
+        // Convex hull calculation using Graham scan algorithm
+        function calculateConvexHull(points) {
+            if (points.length < 3) return points;
+
+            // Find the bottom-most point (and left-most in case of tie)
+            let start = 0;
+            for (let i = 1; i < points.length; i++) {
+                if (points[i][1] < points[start][1] || 
+                    (points[i][1] === points[start][1] && points[i][0] < points[start][0])) {
+                    start = i;
+                }
+            }
+
+            // Sort points by polar angle with respect to start point
+            const startPoint = points[start];
+            const sortedPoints = points.filter((_, i) => i !== start).sort((a, b) => {
+                const angleA = Math.atan2(a[1] - startPoint[1], a[0] - startPoint[0]);
+                const angleB = Math.atan2(b[1] - startPoint[1], b[0] - startPoint[0]);
+                return angleA - angleB;
+            });
+
+            const hull = [startPoint];
+            
+            for (let i = 0; i < sortedPoints.length; i++) {
+                // Remove points that make clockwise turn
+                while (hull.length > 1 && crossProduct(hull[hull.length-2], hull[hull.length-1], sortedPoints[i]) <= 0) {
+                    hull.pop();
+                }
+                hull.push(sortedPoints[i]);
+            }
+
+            return hull;
+        }
+
+        function crossProduct(o, a, b) {
+            return (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]);
+        }
+
+        function showEntryDetails(entry) {
+            let html = `
+                <div class="info-field">
+                    <strong>ID:</strong>
+                    <div>${entry.id}</div>
+                </div>
+                
+                <div class="info-field">
+                    <strong>Coordinates:</strong>
+                    <div>[${entry.coordinates[0].toFixed(4)}, ${entry.coordinates[1].toFixed(4)}]</div>
+                </div>
+                
+                <div class="info-field">
+                    <strong>Subcluster:</strong>
+                    <div>${entry.subcluster_label || 'N/A'}</div>
+                </div>
+            `;
+
+            const cluster = getEntryCluster(entry);
+            if (cluster) {
+                html += `
+                    <div class="info-field">
+                        <strong>Cluster:</strong>
+                        <div>${cluster}</div>
+                    </div>
+                `;
+            }
+
+            if (entry.context_summary) {
+                html += `
+                    <div class="info-field">
+                        <strong>Context Summary:</strong>
+                        <div>${entry.context_summary}</div>
+                    </div>
+                `;
+            }
+
+            if (entry.conversation_summary) {
+                html += `
+                    <div class="info-field">
+                        <strong>Conversation Summary:</strong>
+                        <div>${entry.conversation_summary}</div>
+                    </div>
+                `;
+            }
+
+            if (entry.combined_summary) {
+                html += `
+                    <div class="info-field">
+                        <strong>Combined Summary:</strong>
+                        <div>${entry.combined_summary}</div>
+                    </div>
+                `;
+            }
+
+            if (entry.metadata && Object.keys(entry.metadata).length > 0) {
+                html += `
+                    <div class="info-field">
+                        <strong>Metadata:</strong>
+                        <div style="font-size: 11px;">
+                `;
+                
+                Object.entries(entry.metadata).forEach(([key, value]) => {
+                    html += `<div style="margin-bottom: 3px;"><strong>${key}:</strong> ${value}</div>`;
+                });
+                
+                html += `</div></div>`;
+            }
+
+            entryInfo.innerHTML = html;
+        }
+
+        function showClusterDetails(clusterName, clusterData) {
+            let html = `
+                <div class="info-field">
+                    <strong>Cluster:</strong>
+                    <div>${clusterName}</div>
+                </div>
+                
+                <div class="info-field">
+                    <strong>Total Entries:</strong>
+                    <div>${clusterData.weight || 0}</div>
+                </div>
+                
+                <div class="info-field">
+                    <strong>Coordinates:</strong>
+                    <div>[${clusterData.coordinates[0].toFixed(4)}, ${clusterData.coordinates[1].toFixed(4)}]</div>
+                </div>
+                
+                <div class="info-field">
+                    <strong>Subclusters:</strong>
+                    <div>${clusterData.subcluster_labels ? clusterData.subcluster_labels.join(', ') : 'N/A'}</div>
+                </div>
+            `;
+
+            if (clusterData.description) {
+                html += `
+                    <div class="info-field">
+                        <strong>Description:</strong>
+                        <div>${clusterData.description}</div>
+                    </div>
+                `;
+            }
+
+            html += `
+                <div class="info-field">
+                    <div style="margin-top: 10px; color: #666; font-size: 11px; font-style: italic;">
+                        Click to zoom into this cluster
+                    </div>
+                </div>
+            `;
+
+            entryInfo.innerHTML = html;
+        }
+
+        function showSubclusterDetails(subclusterName, subclusterData) {
+            let html = `
+                <div class="info-field">
+                    <strong>Subcluster:</strong>
+                    <div>${subclusterName}</div>
+                </div>
+                
+                <div class="info-field">
+                    <strong>Entry Count:</strong>
+                    <div>${subclusterData.count || 0}</div>
+                </div>
+                
+                <div class="info-field">
+                    <strong>Coordinates:</strong>
+                    <div>[${subclusterData.coordinates[0].toFixed(4)}, ${subclusterData.coordinates[1].toFixed(4)}]</div>
+                </div>
+            `;
+
+            if (subclusterData.description) {
+                html += `
+                    <div class="info-field">
+                        <strong>Description:</strong>
+                        <div>${subclusterData.description}</div>
+                    </div>
+                `;
+            }
+
+            if (subclusterData.entry_ids) {
+                html += `
+                    <div class="info-field">
+                        <strong>Entry IDs:</strong>
+                        <div>${subclusterData.entry_ids.slice(0, 10).join(', ')}${subclusterData.entry_ids.length > 10 ? '...' : ''}</div>
+                    </div>
+                `;
+            }
+
+            html += `
+                <div class="info-field">
+                    <div style="margin-top: 10px; color: #666; font-size: 11px; font-style: italic;">
+                        Click to zoom into this subcluster
+                    </div>
+                </div>
+            `;
+
+            entryInfo.innerHTML = html;
+        }
+
+        function zoomToCluster(clusterName) {
+            zoomState = 'cluster';
+            currentCluster = clusterName;
+            currentSubcluster = null;
+            
+            // Filter data to show only entries from this cluster
+            const clusterData = data.clusters[clusterName];
+            if (clusterData && clusterData.subcluster_labels) {
+                currentData = data.entries.filter(entry => 
+                    clusterData.subcluster_labels.includes(entry.subcluster_label)
+                );
+            }
+            
+            createChart();
+        }
+
+        function zoomToSubcluster(subclusterName) {
+            zoomState = 'subcluster';
+            currentSubcluster = subclusterName;
+            
+            // Filter data to show only entries from this subcluster
+            currentData = data.entries.filter(entry => 
+                entry.subcluster_label === subclusterName
+            );
+            
+            createChart();
+        }
+
+        function resetZoomView() {
+            zoomState = 'overview';
+            currentCluster = null;
+            currentSubcluster = null;
+            currentData = [...data.entries];
+            createChart();
+        }
+
+        function toggleDrillDownView() {
+            const isDrillDown = chartType.value === 'drill_down';
+            
+            if (isDrillDown) {
+                centerPanel.classList.add('drill-down');
+                chart.style.display = 'none';
+                drillDownText.style.display = 'block';
+                drillDownChart.style.display = 'block';
+                drillDownState = 'clusters';
+                selectedCluster = null;
+                selectedSubcluster = null;
+                populateClusterList();
+                createDrillDownBarChart();
+            } else {
+                centerPanel.classList.remove('drill-down');
+                chart.style.display = 'block';
+                drillDownText.style.display = 'none';
+                drillDownChart.style.display = 'none';
+            }
+        }
+
+        function calculateAverageScore(entries) {
+            const validScores = entries
+                .map(entry => parseFloat(entry.metadata?.score))
+                .filter(score => !isNaN(score));
+            
+            if (validScores.length === 0) return 0;
+            return validScores.reduce((sum, score) => sum + score, 0) / validScores.length;
+        }
+
+        function populateClusterList() {
+            if (!data || !data.clusters) return;
+
+            clusterList.innerHTML = '';
+            
+            if (drillDownState === 'clusters') {
+                Object.entries(data.clusters).forEach(([clusterName, clusterData]) => {
+                    const clusterEntries = currentData.filter(entry => 
+                        clusterData.subcluster_labels?.includes(entry.subcluster_label)
+                    );
+                    const avgScore = calculateAverageScore(clusterEntries);
+                    
+                    const listItem = document.createElement('li');
+                    listItem.className = 'cluster-item';
+                    listItem.dataset.cluster = clusterName;
+                    
+                    listItem.innerHTML = `
+                        <div class="cluster-name">${clusterName.replace(/_/g, ' ')}</div>
+                        <div class="cluster-stats">
+                            Samples: ${clusterData.weight || 0} | Avg Score: ${avgScore.toFixed(2)}
+                        </div>
+                    `;
+                    
+                    listItem.addEventListener('click', () => selectCluster(clusterName));
+                    clusterList.appendChild(listItem);
+                });
+            } else if (drillDownState === 'subclusters' && selectedCluster) {
+                const clusterData = data.clusters[selectedCluster];
+                if (clusterData && clusterData.subcluster_labels) {
+                    clusterData.subcluster_labels.forEach(subclusterLabel => {
+                        const subclusterData = data.subclusters[subclusterLabel];
+                        const subclusterEntries = currentData.filter(entry => 
+                            entry.subcluster_label === subclusterLabel
+                        );
+                        const avgScore = calculateAverageScore(subclusterEntries);
+                        
+                        const listItem = document.createElement('li');
+                        listItem.className = 'cluster-item';
+                        listItem.dataset.subcluster = subclusterLabel;
+                        
+                        listItem.innerHTML = `
+                            <div class="cluster-name">${subclusterLabel.replace(/_/g, ' ')}</div>
+                            <div class="cluster-stats">
+                                Samples: ${subclusterData?.count || 0} | Avg Score: ${avgScore.toFixed(2)}
+                            </div>
+                        `;
+                        
+                        listItem.addEventListener('click', () => selectSubcluster(subclusterLabel));
+                        clusterList.appendChild(listItem);
+                    });
+                }
+                
+                // Add back button
+                const backItem = document.createElement('li');
+                backItem.className = 'cluster-item';
+                backItem.style.backgroundColor = '#f8f9fa';
+                backItem.innerHTML = `
+                    <div class="cluster-name">← Back to Clusters</div>
+                `;
+                backItem.addEventListener('click', () => {
+                    drillDownState = 'clusters';
+                    selectedCluster = null;
+                    selectedSubcluster = null;
+                    populateClusterList();
+                    createDrillDownBarChart();
+                });
+                clusterList.insertBefore(backItem, clusterList.firstChild);
+            } else if (drillDownState === 'samples' && selectedSubcluster) {
+                // Show individual samples for the selected subcluster
+                const subclusterEntries = currentData.filter(entry => 
+                    entry.subcluster_label === selectedSubcluster
+                );
+                
+                subclusterEntries.forEach((entry, index) => {
+                    const sampleItem = document.createElement('li');
+                    sampleItem.className = 'sample-item';
+                    
+                    sampleItem.innerHTML = `
+                        <div class="sample-header">
+                            <span>Sample ${entry.id}</span>
+                            <span class="sample-toggle">▼</span>
+                        </div>
+                        <div class="sample-content" id="sample-${index}">
+                            <div class="sample-field">
+                                <strong>ID:</strong><span>${entry.id}</span>
+                            </div>
+                            <div class="sample-field">
+                                <strong>Coordinates:</strong><span>[${entry.coordinates[0].toFixed(4)}, ${entry.coordinates[1].toFixed(4)}]</span>
+                            </div>
+                            ${entry.metadata?.score ? `<div class="sample-field"><strong>Score:</strong><span>${entry.metadata.score}</span></div>` : ''}
+                            ${entry.metadata?.agent_id ? `<div class="sample-field"><strong>Agent ID:</strong><span>${entry.metadata.agent_id}</span></div>` : ''}
+                            ${entry.context_summary ? `<div class="sample-field"><strong>Context:</strong><span>${entry.context_summary.substring(0, 100)}${entry.context_summary.length > 100 ? '...' : ''}</span></div>` : ''}
+                            ${entry.conversation_summary ? `<div class="sample-field"><strong>Conversation:</strong><span>${entry.conversation_summary.substring(0, 100)}${entry.conversation_summary.length > 100 ? '...' : ''}</span></div>` : ''}
+                        </div>
+                    `;
+                    
+                    // Add click event for collapsible functionality
+                    sampleItem.addEventListener('click', () => {
+                        const content = sampleItem.querySelector('.sample-content');
+                        const toggle = sampleItem.querySelector('.sample-toggle');
+                        
+                        if (content.classList.contains('expanded')) {
+                            content.classList.remove('expanded');
+                            toggle.textContent = '▼';
+                        } else {
+                            content.classList.add('expanded');
+                            toggle.textContent = '▲';
+                        }
+                    });
+                    
+                    clusterList.appendChild(sampleItem);
+                });
+                
+                // Add back button
+                const backItem = document.createElement('li');
+                backItem.className = 'cluster-item';
+                backItem.style.backgroundColor = '#f8f9fa';
+                backItem.innerHTML = `
+                    <div class="cluster-name">← Back to Subclusters</div>
+                `;
+                backItem.addEventListener('click', () => {
+                    drillDownState = 'subclusters';
+                    selectedSubcluster = null;
+                    populateClusterList();
+                    createDrillDownBarChart();
+                });
+                clusterList.insertBefore(backItem, clusterList.firstChild);
+            }
+        }
+
+        function selectCluster(clusterName) {
+            selectedCluster = clusterName;
+            drillDownState = 'subclusters';
+            selectedSubcluster = null;
+            
+            // Update visual selection
+            document.querySelectorAll('.cluster-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            populateClusterList();
+            createDrillDownBarChart();
+        }
+
+        function selectSubcluster(subclusterLabel) {
+            selectedSubcluster = subclusterLabel;
+            drillDownState = 'samples';
+            
+            // Update visual selection
+            document.querySelectorAll('.cluster-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            populateClusterList();
+            createDrillDownBarChart();
+        }
+
+        function createDrillDownBarChart() {
+            if (!data) return;
+
+            const traces = [];
+            const segmentByValue = segmentBy.value;
+            
+            // If a metadata segmentation is selected, show segmented data
+            if (segmentByValue) {
+                const valueCounts = {};
+                let relevantEntries = [];
+                
+                // Get relevant entries based on current drill-down state
+                if (drillDownState === 'clusters') {
+                    relevantEntries = currentData;
+                } else if (drillDownState === 'subclusters' && selectedCluster) {
+                    const clusterData = data.clusters[selectedCluster];
+                    relevantEntries = currentData.filter(entry => 
+                        clusterData.subcluster_labels?.includes(entry.subcluster_label)
+                    );
+                } else if (drillDownState === 'samples' && selectedSubcluster) {
+                    relevantEntries = currentData.filter(entry => 
+                        entry.subcluster_label === selectedSubcluster
+                    );
+                }
+                
+                // Count occurrences of each value for the selected metadata key
+                relevantEntries.forEach(entry => {
+                    const value = entry.metadata?.[segmentByValue];
+                    if (value !== undefined && value !== null && value !== '') {
+                        const valueStr = String(value);
+                        valueCounts[valueStr] = (valueCounts[valueStr] || 0) + 1;
+                    }
+                });
+                
+                const labels = Object.keys(valueCounts).sort();
+                const counts = labels.map(label => valueCounts[label]);
+                
+                traces.push({
+                    x: labels,
+                    y: counts,
+                    type: 'bar',
+                    name: `Count by ${segmentByValue}`,
+                    marker: { color: '#059669' }
+                });
+                
+                const layout = {
+                    title: `Distribution by ${segmentByValue.replace(/_/g, ' ')}`,
+                    xaxis: { title: segmentByValue.replace(/_/g, ' ') },
+                    yaxis: { title: 'Count' },
+                    showlegend: false,
+                    margin: { t: 50, b: 100, l: 50, r: 50 }
+                };
+                
+                Plotly.newPlot('barChart', traces, layout);
+            } else {
+                // Default behavior - show clusters or subclusters
+                if (drillDownState === 'clusters') {
+                    const clusterNames = [];
+                    const sampleCounts = [];
+                    const avgScores = [];
+                    
+                    Object.entries(data.clusters).forEach(([clusterName, clusterData]) => {
+                        const clusterEntries = currentData.filter(entry => 
+                            clusterData.subcluster_labels?.includes(entry.subcluster_label)
+                        );
+                        const avgScore = calculateAverageScore(clusterEntries);
+                        
+                        clusterNames.push(clusterName.replace(/_/g, ' '));
+                        sampleCounts.push(clusterData.weight || 0);
+                        avgScores.push(avgScore);
+                    });
+                    
+                    traces.push({
+                        x: clusterNames,
+                        y: sampleCounts,
+                        type: 'bar',
+                        name: 'Sample Count',
+                        marker: { color: '#2563eb' }
+                    });
+                } else if (drillDownState === 'subclusters' && selectedCluster) {
+                    const clusterData = data.clusters[selectedCluster];
+                    const subclusterNames = [];
+                    const sampleCounts = [];
+                    
+                    if (clusterData && clusterData.subcluster_labels) {
+                        clusterData.subcluster_labels.forEach(subclusterLabel => {
+                            const subclusterData = data.subclusters[subclusterLabel];
+                            subclusterNames.push(subclusterLabel.replace(/_/g, ' '));
+                            sampleCounts.push(subclusterData?.count || 0);
+                        });
+                    }
+                    
+                    traces.push({
+                        x: subclusterNames,
+                        y: sampleCounts,
+                        type: 'bar',
+                        name: 'Sample Count',
+                        marker: { color: '#7c3aed' }
+                    });
+                } else if (drillDownState === 'samples' && selectedSubcluster) {
+                    // Show individual sample metadata for the selected subcluster
+                    const subclusterEntries = currentData.filter(entry => 
+                        entry.subcluster_label === selectedSubcluster
+                    );
+                    
+                    const sampleIds = subclusterEntries.map(entry => entry.id);
+                    const scores = subclusterEntries.map(entry => parseFloat(entry.metadata?.score) || 0);
+                    
+                    traces.push({
+                        x: sampleIds,
+                        y: scores,
+                        type: 'bar',
+                        name: 'Sample Scores',
+                        marker: { color: '#059669' }
+                    });
+                }
+                
+                let title, xTitle, yTitle;
+                if (drillDownState === 'clusters') {
+                    title = 'Cluster Overview';
+                    xTitle = 'Clusters';
+                    yTitle = 'Sample Count';
+                } else if (drillDownState === 'subclusters') {
+                    title = `Subclusters in ${selectedCluster?.replace(/_/g, ' ')}`;
+                    xTitle = 'Subclusters';
+                    yTitle = 'Sample Count';
+                } else if (drillDownState === 'samples') {
+                    title = `Samples in ${selectedSubcluster?.replace(/_/g, ' ')}`;
+                    xTitle = 'Sample ID';
+                    yTitle = 'Score';
+                }
+                
+                const layout = {
+                    title: title,
+                    xaxis: { title: xTitle },
+                    yaxis: { title: yTitle },
+                    showlegend: false,
+                    margin: { t: 50, b: 100, l: 50, r: 50 }
+                };
+                
+                Plotly.newPlot('barChart', traces, layout);
+            }
+        }
+
+        // Filter functionality
+        filterParameter.addEventListener('change', function() {
+            populateFilterValues(this.value);
+        });
+        applyFilters.addEventListener('click', applyDataFilters);
+        clearFilters.addEventListener('click', clearDataFilters);
+        resetZoom.addEventListener('click', resetZoomView);
+        colorBy.addEventListener('change', createChart);
+        segmentBy.addEventListener('change', function() {
+            if (chartType.value === 'drill_down') {
+                createDrillDownBarChart();
+            }
+        });
+        chartType.addEventListener('change', function() {
+            // Enable/disable segment by dropdown based on chart type
+            segmentBy.disabled = (this.value !== 'drill_down');
+            
+            toggleDrillDownView();
+            createChart();
+        });
+
+        function applyDataFilters() {
+            if (!data || !data.entries) return;
+
+            let filteredData = [...data.entries];
+
+            const parameter = filterParameter.value;
+            const operator = filterOperator.value;
+            const value = filterValue.value;
+
+            if (parameter && value) {
+                filteredData = filteredData.filter(entry => {
+                    let entryValue;
+                    
+                    if (parameter === 'cluster') {
+                        entryValue = getEntryCluster(entry);
+                    } else if (parameter === 'subcluster') {
+                        entryValue = entry.subcluster_label;
+                    } else if (parameter.startsWith('metadata.')) {
+                        const key = parameter.replace('metadata.', '');
+                        entryValue = entry.metadata && entry.metadata[key];
+                    }
+
+                    if (entryValue === undefined || entryValue === null) {
+                        return false;
+                    }
+
+                    entryValue = String(entryValue);
+                    const filterValue = String(value);
+
+                    switch (operator) {
+                        case 'equals':
+                            return entryValue === filterValue;
+                        case 'not_equals':
+                            return entryValue !== filterValue;
+                        case 'contains':
+                            return entryValue.toLowerCase().includes(filterValue.toLowerCase());
+                        case 'greater_than':
+                            return parseFloat(entryValue) > parseFloat(filterValue);
+                        case 'greater_equal':
+                            return parseFloat(entryValue) >= parseFloat(filterValue);
+                        case 'less_than':
+                            return parseFloat(entryValue) < parseFloat(filterValue);
+                        case 'less_equal':
+                            return parseFloat(entryValue) <= parseFloat(filterValue);
+                        default:
+                            return true;
+                    }
+                });
+            }
+
+            currentData = filteredData;
+            createChart();
+        }
+
+        function clearDataFilters() {
+            filterParameter.selectedIndex = 0;
+            filterOperator.selectedIndex = 0;
+            filterValue.innerHTML = '<option value="">Select value...</option>';
+            filterValue.disabled = true;
+            
+            if (data && data.entries) {
+                currentData = [...data.entries];
+                createChart();
+            }
+        }
+    </script>
+</body>
+</html>
