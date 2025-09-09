@@ -1269,11 +1269,6 @@
                 </div>
                 
                 <div class="info-field">
-                    <strong>Coordinates:</strong>
-                    <div>[${entry.coordinates[0].toFixed(4)}, ${entry.coordinates[1].toFixed(4)}]</div>
-                </div>
-                
-                <div class="info-field">
                     <strong>Subcluster:</strong>
                     <div>${entry.subcluster_label || 'N/A'}</div>
                 </div>
@@ -1307,14 +1302,6 @@
                 `;
             }
 
-            if (entry.combined_summary) {
-                html += `
-                    <div class="info-field">
-                        <strong>Combined Summary:</strong>
-                        <div>${entry.combined_summary}</div>
-                    </div>
-                `;
-            }
 
             if (entry.metadata && Object.keys(entry.metadata).length > 0) {
                 html += `
@@ -1494,7 +1481,13 @@
 
             clusterList.innerHTML = '';
             
+            // Add header to show current level
+            const headerItem = document.createElement('li');
+            headerItem.style.cssText = 'background-color: #f0f0f0; border: none; padding: 10px; margin-bottom: 10px; font-weight: bold; text-align: center; color: #333; font-size: 14px;';
+            
             if (drillDownState === 'clusters') {
+                headerItem.textContent = 'Clusters';
+                clusterList.appendChild(headerItem);
                 Object.entries(data.clusters).forEach(([clusterName, clusterData]) => {
                     const clusterEntries = currentData.filter(entry => 
                         clusterData.subcluster_labels?.includes(entry.subcluster_label)
@@ -1508,14 +1501,18 @@
                     listItem.innerHTML = `
                         <div class="cluster-name">${clusterName.replace(/_/g, ' ')}</div>
                         <div class="cluster-stats">
-                            Samples: ${clusterData.weight || 0} | Avg Score: ${avgScore.toFixed(2)}
+                            Samples: ${clusterEntries.length} | Avg Score: ${avgScore.toFixed(2)}
                         </div>
                     `;
                     
                     listItem.addEventListener('click', () => selectCluster(clusterName));
+                    listItem.addEventListener('mouseenter', () => showClusterDetails(clusterName, clusterData));
                     clusterList.appendChild(listItem);
                 });
             } else if (drillDownState === 'subclusters' && selectedCluster) {
+                headerItem.textContent = `Subclusters in ${selectedCluster.replace(/_/g, ' ')}`;
+                clusterList.appendChild(headerItem);
+                
                 const clusterData = data.clusters[selectedCluster];
                 if (clusterData && clusterData.subcluster_labels) {
                     clusterData.subcluster_labels.forEach(subclusterLabel => {
@@ -1532,11 +1529,12 @@
                         listItem.innerHTML = `
                             <div class="cluster-name">${subclusterLabel.replace(/_/g, ' ')}</div>
                             <div class="cluster-stats">
-                                Samples: ${subclusterData?.count || 0} | Avg Score: ${avgScore.toFixed(2)}
+                                Samples: ${subclusterEntries.length} | Avg Score: ${avgScore.toFixed(2)}
                             </div>
                         `;
                         
                         listItem.addEventListener('click', () => selectSubcluster(subclusterLabel));
+                        listItem.addEventListener('mouseenter', () => showSubclusterDetails(subclusterLabel, subclusterData));
                         clusterList.appendChild(listItem);
                     });
                 }
@@ -1557,6 +1555,9 @@
                 });
                 clusterList.insertBefore(backItem, clusterList.firstChild);
             } else if (drillDownState === 'samples' && selectedSubcluster) {
+                headerItem.textContent = `Samples in ${selectedSubcluster.replace(/_/g, ' ')}`;
+                clusterList.appendChild(headerItem);
+                
                 // Show individual samples for the selected subcluster
                 const subclusterEntries = currentData.filter(entry => 
                     entry.subcluster_label === selectedSubcluster
@@ -1598,6 +1599,9 @@
                             toggle.textContent = '▲';
                         }
                     });
+                    
+                    // Add hover event to show entry details in info panel
+                    sampleItem.addEventListener('mouseenter', () => showEntryDetails(entry));
                     
                     clusterList.appendChild(sampleItem);
                 });
@@ -1714,7 +1718,7 @@
                         const avgScore = calculateAverageScore(clusterEntries);
                         
                         clusterNames.push(clusterName.replace(/_/g, ' '));
-                        sampleCounts.push(clusterData.weight || 0);
+                        sampleCounts.push(clusterEntries.length);
                         avgScores.push(avgScore);
                     });
                     
@@ -1733,8 +1737,11 @@
                     if (clusterData && clusterData.subcluster_labels) {
                         clusterData.subcluster_labels.forEach(subclusterLabel => {
                             const subclusterData = data.subclusters[subclusterLabel];
+                            const subclusterEntries = currentData.filter(entry => 
+                                entry.subcluster_label === subclusterLabel
+                            );
                             subclusterNames.push(subclusterLabel.replace(/_/g, ' '));
-                            sampleCounts.push(subclusterData?.count || 0);
+                            sampleCounts.push(subclusterEntries.length);
                         });
                     }
                     
@@ -1863,6 +1870,12 @@
 
             currentData = filteredData;
             createChart();
+            
+            // Update drill-down interface if it's active
+            if (chartType.value === 'drill_down') {
+                populateClusterList();
+                createDrillDownBarChart();
+            }
         }
 
         function clearDataFilters() {
@@ -1874,6 +1887,12 @@
             if (data && data.entries) {
                 currentData = [...data.entries];
                 createChart();
+                
+                // Update drill-down interface if it's active
+                if (chartType.value === 'drill_down') {
+                    populateClusterList();
+                    createDrillDownBarChart();
+                }
             }
         }
     </script>
